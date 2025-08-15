@@ -1,0 +1,29 @@
+:Base Matrix.hlp
+:Title Matrix Calculator Help
+1 Features
+2 Matrix
+3 New=IDH_Matrix_New
+3 File Operations=IDH_Matrix_LoadSave
+3 Export matrix as HTML table=IDH_Matrix_HTMLExport
+3 Memory=IDH_Matrix_Memory
+3 Maximum size (20x20)=IDH_Matrix_MaxSize
+3 Renumber rows/columns=IDH_Matrix_XYRefresh
+3 Show/hide all zeros=IDH_Matrix_Show0
+3 Options=IDH_Matrix_Settings
+3 Run Windows calculator=IDH_Matrix_RunWinCalc
+2 Operations
+3 Undo=IDH_Op_Undo
+3 Basic matrix operations=IDH_Op_Add
+3 Scalar multiplication=IDH_Op_ScalarProd
+3 Transpose matrix=IDH_Op_Transp
+3 Rank of matrix=IDH_Op_Rang
+3 Determinant (3x3)=IDH_Op_Det
+2 Transformations
+3 Gauss algorithm=IDH_Uf_Gauss
+3 Elemental transformations=IDH_Uf_EU
+3 Advanced transformation=IDH_Uf_Transform
+1 Information about this version
+2 New and changed features=IDH_New
+2 License for use and distribution=IDH_License
+2 Support and version list=IDH_VerList
+2 Known bugs=IDH_Bugs

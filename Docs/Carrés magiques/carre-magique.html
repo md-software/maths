@@ -1,0 +1,145 @@
+<html><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="Microsoft Word 98"><title>Programme de calcul de carrés magiques</title></head><body bgcolor="white">
+<center>
+<table width="100%">
+<tbody><tr align="center">
+<td align="left">
+   <b><font color="blue" size="+2">INF</font>ormatique et <br><font color="blue" size="+2">RES</font>eaux</b><p>
+
+</p></td>
+<td colspan="3">
+<center>
+   <b>Ecole Nationale Supérieure des Télécommunications</b><p><b><font color="blue" size="+2">L</font>angage <font color="blue" size="+2">C</font></b></p></center></td>
+<td align="left">
+   <b><font color="blue" size="+2">B</font>ase de <br><font color="blue" size="+2">C</font>onnaissances <br><font color="blue" size="+2">I</font>ndispensables</b><p>
+</p></td>
+</tr></tbody></table>
+   <font size="+1">Programme de calcul de carrés magiques</font>
+</center>
+
+<p>
+
+<img src="carre-magique_fichiers/rainbolg.gif" border="0" width="100%">
+
+<b><font face="Helvetica"></font></b></p><p align="center"><b><font face="Helvetica">&nbsp;</font></b></p>
+<font face="Times"><p>&nbsp;</p>
+<p>Un carré magique d'ordre N est un tableau carré (N*N) dont les
+composants sont les N2 premiers nombres entiers disposés de telle façon
+que les sommes des termes de chaque colonne, de chaque ligne, ou de
+chaque diagonale principale soient égales.</p>
+
+<u></u><p><u>Exemple</u>: Carré magique d'ordre 3</p>
+<ul><ul><ul>
+<table border="0"><tbody><tr><td>8</td><td>1</td><td>6</td>
+</tr>
+<tr>
+<td>3</td><td>5</td><td>7</td>
+</tr>
+<tr>
+<td>4</td><td>9</td><td>2</td>
+</tr>
+</tbody></table>
+</ul></ul></ul>
+<p>Somme des termes d'une ligne 	= somme des termes d'une colonne = somme des termes d'une diagonale = 15</p>
+
+<u></u><p><u>Remarque </u>: l'algorithme donné en annexe ne s'applique qu'aux carrés d'ordre impair.</p>
+
+<b><u></u></b><p><b><u>Fonctions à réaliser</u></b></p>
+
+<p>- Une première fonction consiste à calculer le carré magique de l'ordre spécifié en suivant l'algorithme donné en annexe.</p>
+
+<p>- Une deuxième fonction a pour objectif de réaliser la visualisation
+à l'écran du carré magique résultant des calculs précédents.</p>
+<u>
+<b>
+<p>Contraintes</p>
+</b>
+</u><p>On n'effectuera pas le calcul si l'ordre demandé n'est pas impair.</p>
+<p>On devra se limiter à un ordre tel que la visualisation reste possible.</p>
+<u>
+<b>
+<p>Recette</p>
+</b></u>
+<p>Le programme sera testé sur un ou deux exemples particuliers.</p>
+
+<p>&nbsp;</p>
+</font><b><font face="Helvetica"></font></b><p align="center"><b><font face="Helvetica">ANNEXE</font></b></p>
+<font face="Times">
+<p>Lorsque N est impair, il existe un algorithme; l'exposé sera fait
+sur un carré d'ordre 5, mais le raisonnement s'appliquerait à un carré
+d'ordre N.</p>
+
+<u><p>Phase initiale</p>
+</u>
+<p>Pour commencer, on place le chiffre 1 dans la case située au-dessus
+de celle du milieu du carré (marquée d'une astérisque). On continue
+ensuite en plaçant les nombres 2, 3, 4 etc... selon la diagonale
+ascendante de direction NORD-EST. Si I est l'indice de ligne et J
+l'indice de colonne, cette diagonale s'obtient en faisant I=I-1 et
+J=J+1.</p>
+<ul><ul><ul>
+<table border="1">
+<tbody><tr>
+<td>23</td><td>6</td><td>19</td><td>2</td><td>15</td>
+</tr>
+<tr>
+<td>10</td><td>18</td><td bgcolor="#999999">1</td><td>14</td><td>22</td>
+</tr>
+<tr>
+<td>17</td><td>5</td><td>13</td><td>21</td><td>9</td>
+</tr>
+<tr>
+<td>4</td><td>12</td><td>25</td><td>8</td><td>16</td>
+</tr>
+<tr>
+<td>11</td><td>24</td><td>7</td><td>20</td><td>3</td>
+</tr>
+</tbody></table>
+</ul></ul></ul>
+<u><p>Règles à observer lors de la progression dans le carré</p>
+</u>
+<p>La loi de progression mentionnée ci-dessus entraînera tôt ou tard
+une sortie hors des limites du carré défini. La notation A(I,J)
+repérant l'élément courant du tableau A, on devra appliquer les règles
+suivantes:</p>
+<dir>
+
+<p>-	Si l'élément A(I,J) atteint est tel que I&lt;1, on repart de la ligne du bas, tout en conservant le même indice J de colonne.</p>
+
+<p>- 	Si c'est l'indice J de colonne qui tombe en dehors des limites:</p><dir>
+
+<p>-	si l'on sort à droite, on repart de la première colonne à gauche, tout en conservant la valeur de l'indice I obtenu.</p>
+<p>-	si l'on sort à gauche, on place J sur la dernière colonne, en conservant toujours l'indice ligne I.</p>
+</dir>
+
+<p>- Si les deux indices I et J sortaient simultanément des limites, on
+devrait appliquer les deux premières règles, la logique n'étant pas
+perturbée par l'ordre d'application de ces règles.</p>
+</dir>
+
+<u><p>Vérification de la case atteinte</p>
+</u>
+<p>Il peut arriver que l'on atteigne une case contenant déjà un nombre
+rangé précédemment. On doit donc prévoir un moyen permettant de faire
+cette vérification: par exemple, lors de l'initialisation, on placera
+des zéros dans tous les éléments du carré, ce qui permettra
+ultérieurement de déduire si la case est libre ou non.</p>
+
+<p>Si le test fait apparaître une occupation de la case A(I,J), on
+choisit, et ceci pour une fois seulement, la direction NORD-OUEST à
+partir de la case courante occupée; on reprendra la direction normale
+NORD-EST dès que le nombre courant est placé dans cette case "libre".
+La direction NORD-OUEST s'obtient en faisant I=I-1 et J=J-1, étant
+entendu que l'on devra vérifier que l'on ne sort pas du tableau.</p>
+
+<u></u><p><u>Remarque</u>: On peut interprèter ces diverses règles
+d'une autre manière: en considérant simplement que le carré est, pour
+chaque dimension, placé sur un cylindre de telle sorte que la ligne du
+bas est située immédiatement au-dessus de celle du haut, que la colonne
+de droite est située à gauche de la première colonne, et réciproquement
+pour la colonne de gauche. Ceci permet d'imaginer les cas de "sortie du
+carré".</p>
+</font>
+</body></html>

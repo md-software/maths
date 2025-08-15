@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML 96.1 (Feb 5, 1996) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Les fonctions continues sans derivees</TITLE>
+</HEAD>
+<BODY LANG="EN" bgcolor="#ffffff">
+<A HREF="index.html"><IMG SRC="../Icones/back.xbm"> </A> Retour
+<A HREF="plan.html"><IMG SRC="../Icones/plan.xbm"> </A>Plan
+<A HREF="../index.html"><IMG SRC="../Icones/home.gif"> </A> Home Andr&eacute; Brouty
+<br>
+<a href="http://www.enst-bretagne.fr/"><IMG SRC="../Images/ABlogo.gif" border=0></a>
+<p>
+<CENTER>
+<H3> Les fonctions continues sans d&eacute;riv&eacute;e.<BR>
+Derni&egrave;re mise &agrave; jour le 27 avril 1996.</H3>
+<H4>Il existe une <A HREF="../Latex/noderiv.tex">version latex</A> de cet article.</H4>
+</CENTER>
+<HR>
+<P>
+<UL>
+<LI> <A HREF="noderiv.html#SECTION00010000000000000000">Introduction</A>
+<LI> <A HREF="noderiv.html#SECTION00020000000000000000">Les travaux de Weierstrass</A>
+<LI> <A HREF="noderiv.html#SECTION00030000000000000000">Les travaux de Dini (1854 - 1918)</A>
+<LI> <A HREF="noderiv.html#SECTION00040000000000000000">Exemples</A>
+<LI> <A HREF="noderiv.html#SECTION00050000000000000000">Aspect g&#233;om&#233;trique</A>
+<LI> <A HREF="noderiv.html#SECTION00060000000000000000">Bibliographie</A>
+</UL>
+<H1><A NAME="SECTION00010000000000000000">Introduction</A></H1>
+<P>
+Au 18&#232;me si&egrave;cle la notion de fonction se confondait avec celle de courbe
+alg&#233;brique. Dans <EM>l'Encyclop&#233;die</EM> de Diderot, &#224; l'article <EM>fonction</EM>
+r&#233;dig&#233; par D'Alembert on peut lire:
+<BLOCKQUOTE> <EM>&quot;...... On appelle fonction de x ou en g&#233;n&#233;ral d'une quantit&#233;
+quelconque, une quantit&#233; alg&#233;brique compos&#233;e de tant de termes que l'on
+voudra et dans laquelle x se trouve de mani&#232;re quelconque, m&#233;l&#233;e ou non
+avec des constantes.Ainsi </EM>
+ <IMG WIDTH=310 HEIGHT=29 ALIGN=BOTTOM ALT="math23" SRC="Noderiv/img1.gif"  > 
+<EM>sont des fonctions de x.&quot;</EM>
+</BLOCKQUOTE>
+Nous sommes loin de la d&#233;finition moderne.<BR>
+<P>
+Il &#233;tait &#224; cette &#233;poque, intuitif, m&#234;me &#233;vident qu'une fonction
+continue admette des d&#233;riv&#233;es, &#224; part quelques points singuliers. Cela
+paraissait m&#234;me une v&#233;rit&#233; premi&#232;re qu'il &#233;tait inutile de d&#233;montrer,
+puisqu'on pouvait tracer une tangente &#224; la courbe qui la repr&#233;sentait.<BR>
+<P>
+Cette notion va se pr&#233;ciser au XIX&#232;me si&#232;cle avec les travaux de Cauchy,
+Dirichlet, Riemann et quelques autres. C'est &#224; Riemann que nous devons la
+d&#233;finition de fonction telle que nous la connaissons aujourd'hui.<BR>
+<P>
+Au d&#233;but du XIX&#232;me si&#232;cle les seules fonctions qui pr&#233;sentaient aux yeux
+des math&#233;maticiens un int&#233;r&#234;t certain &#233;taient les fonctions analytiques.<BR> 
+Apr&#232;s 1850 on s'int&#233;resse &#224; l'&#233;tude des s&#233;ries trigonom&#233;triques qui
+jouent un r&#244;le important en physique o&#249; elles interviennent dans l'&#233;quation des
+cordes vibrantes et dans les s&#233;ries de Fourier.<BR>
+<P>
+Il est facile de voir qu'une fonction d&#233;rivable en tout point d'un domaine y est
+continue. La r&#233;ciproque est fausse. Les contre-exemples abondent.
+<BR> <P>
+<H1><A NAME="SECTION00020000000000000000">Les travaux de Weierstrass</A></H1>
+<P>
+Weierstrass (1815 - 1897) fut le premier &#224; donner en 1861 un exemple de fonction
+continue n'admettant de d&#233;riv&#233;e en aucun point de son domaine de d&#233;finition
+dans lequel elle est continue.<BR>
+<P>
+La fonction donn&#233;e par Weierstrass est la suivante:
+<BLOCKQUOTE> <P> <IMG WIDTH=332 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath470" SRC="Noderiv/img2.gif"  > <P></BLOCKQUOTE>
+Pour  <IMG WIDTH=47 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline478" SRC="Noderiv/img3.gif"  > , <I>F</I>(<I>x</I>) est uniform&#233;ment convergente car absolument
+convergente, et on &#233;tablit ais&#233;ment:
+<BLOCKQUOTE> <P> <IMG WIDTH=364 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath471" SRC="Noderiv/img4.gif"  > <P></BLOCKQUOTE>
+Nous imposerons en plus &#224; <I>a</I> d'&#234;tre impair et au produit <I>ab</I>, d'&#234;tre
+sup&#233;rieur &#224;  <IMG WIDTH=43 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline486" SRC="Noderiv/img5.gif"  > , alors cette fonction n'admet de
+d&#233;riv&#233;e en aucun point. On trouvera des d&#233;monstrations dans GOUR[1] et
+DBR[1] qui sont distinctes. Ici nous allons esquisser la d&#233;montration de Goursat.<BR>
+<P>
+Cette fonction ainsi d&#233;finie est &#224; peu pr&#232;s impossible &#224; dessiner. Au
+voisinage de chacun de ses points elle oscille ind&#233;finiment et les oscillations
+s'&#233;crasent un peu &#224; la mani&#232;re de  <IMG WIDTH=45 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline488" SRC="Noderiv/img6.gif"  >  au voisinage de 0.<BR>
+<P>
+Nous devons &#233;tudier la d&#233;riv&#233;e:
+ <IMG WIDTH=136 HEIGHT=33 ALIGN=MIDDLE ALT="tex2html_wrap_inline490" SRC="Noderiv/img7.gif"  > <BR> 
+<BR> 
+posons:  <IMG WIDTH=221 HEIGHT=33 ALIGN=MIDDLE ALT="tex2html_wrap_inline492" SRC="Noderiv/img8.gif"  >  avec
+<P>
+<P> <IMG WIDTH=407 HEIGHT=46 ALIGN=BOTTOM ALT="displaymath472" SRC="Noderiv/img9.gif"  > <P> 
+<P> <IMG WIDTH=406 HEIGHT=43 ALIGN=BOTTOM ALT="displaymath473" SRC="Noderiv/img10.gif"  > <P>
+<P>
+Le principe de la d&#233;monstration consiste &#224; choisir la mani&#232;re dont <I>h</I> tend
+vers 0 et mettre en &#233;vidence le fait que la tangente &#224; la courbe pr&#232;s de
+ce point devient verticale (cas de la d&#233;monstration de Goursat), ou oscille
+entre  <IMG WIDTH=26 HEIGHT=13 ALIGN=MIDDLE ALT="tex2html_wrap_inline496" SRC="Noderiv/img11.gif"  >  et  <IMG WIDTH=26 HEIGHT=20 ALIGN=MIDDLE ALT="tex2html_wrap_inline498" SRC="Noderiv/img12.gif"  >  (cas de la d&#233;monstration de Du Bois-Reymond).
+<BR> <P>
+<H2><A NAME="SECTION00021000000000000000">Majoration de  <IMG WIDTH=38 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline502" SRC="Noderiv/img13.gif"  > </A></H2>
+<P>
+On utilise la formule des accroissements finis:  <IMG WIDTH=265 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline504" SRC="Noderiv/img14.gif"  > 
+d'o&#249; 
+<BLOCKQUOTE> <P> <IMG WIDTH=555 HEIGHT=46 ALIGN=BOTTOM ALT="displaymath500" SRC="Noderiv/img15.gif"  > <P></BLOCKQUOTE>
+Si on suppose <I>ab</I> &gt; 1 on a la majoration d&#233;sir&#233;e:  <IMG WIDTH=102 HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline508" SRC="Noderiv/img16.gif"  > 
+<BR> 
+On remarque que si <I>ab</I> &lt; 1 la s&#233;rie des d&#233;riv&#233;es converge uniform&#233;ment
+et la fonction <I>F</I>(<I>x</I>) est d&#233;rivable.
+<BR> <P>
+<H2><A NAME="SECTION00022000000000000000">Minoration de  <IMG WIDTH=36 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline522" SRC="Noderiv/img17.gif"  > </A></H2>
+<P>
+D&#233;composons  <IMG WIDTH=27 HEIGHT=11 ALIGN=BOTTOM ALT="tex2html_wrap_inline524" SRC="Noderiv/img18.gif"  >  en sa partie enti&#232;re et sa partie d&#233;cimale:<BR>
+<P>
+ <IMG WIDTH=108 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline526" SRC="Noderiv/img19.gif"  >  avec
+<IMG WIDTH=96 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline528" SRC="Noderiv/img20.gif"  >  et
+<IMG WIDTH=17 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline530" SRC="Noderiv/img21.gif"  >  v&#233;rifiant:  <IMG WIDTH=92 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline532" SRC="Noderiv/img22.gif"  > <BR>
+<P>
+On impose &#224; <I>h</I> la fa&#231;on dont il doit tendre vers 0 en posant:<BR>
+<P>
+ <IMG WIDTH=74 HEIGHT=30 ALIGN=MIDDLE ALT="tex2html_wrap_inline536" SRC="Noderiv/img23.gif"  >  avec
+<IMG WIDTH=59 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline538" SRC="Noderiv/img24.gif"  >  et donc  <IMG WIDTH=131 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline540" SRC="Noderiv/img25.gif"  > ,
+d'o&#249;:  <IMG WIDTH=68 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline542" SRC="Noderiv/img26.gif"  >  on a donc:<BR>
+<P>
+ <IMG WIDTH=737 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline544" SRC="Noderiv/img27.gif"  > 
+<BR>
+<P>
+Le nombre <I>a</I> &#233;tant impair,  <IMG WIDTH=18 HEIGHT=11 ALIGN=BOTTOM ALT="tex2html_wrap_inline548" SRC="Noderiv/img28.gif"  >  est impair, donc
+<IMG WIDTH=36 HEIGHT=11 ALIGN=BOTTOM ALT="tex2html_wrap_inline550" SRC="Noderiv/img29.gif"  >  est aussi impair et  <IMG WIDTH=59 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline538" SRC="Noderiv/img24.gif"  >  nous montrent
+que  <IMG WIDTH=110 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline554" SRC="Noderiv/img30.gif"  >  est de m&#234;me parit&#233; que
+<IMG WIDTH=48 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline556" SRC="Noderiv/img31.gif"  > , par suite  <IMG WIDTH=219 HEIGHT=28 ALIGN=MIDDLE ALT="tex2html_wrap_inline558" SRC="Noderiv/img32.gif"  > <BR> 
+<BR> 
+De m&#234;me on a :
+<BLOCKQUOTE>  <IMG WIDTH=911 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline560" SRC="Noderiv/img33.gif"  > </BLOCKQUOTE>
+mais  <IMG WIDTH=58 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline562" SRC="Noderiv/img34.gif"  >  est un entier de m&#234;me parit&#233; que
+<IMG WIDTH=20 HEIGHT=14 ALIGN=MIDDLE ALT="tex2html_wrap_inline564" SRC="Noderiv/img35.gif"  >  puisque  <IMG WIDTH=36 HEIGHT=11 ALIGN=BOTTOM ALT="tex2html_wrap_inline550" SRC="Noderiv/img29.gif"  >  est impair, d'o&#249;<BR>
+<P>
+ <IMG WIDTH=175 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline568" SRC="Noderiv/img36.gif"  >  et
+<IMG WIDTH=132 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline570" SRC="Noderiv/img37.gif"  >   <IMG WIDTH=22 HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline572" SRC="Noderiv/img38.gif"  > .<BR> <BR> 
+Ainsi  <IMG WIDTH=248 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline574" SRC="Noderiv/img39.gif"  > , d'o&#249;
+<P> <IMG WIDTH=406 HEIGHT=43 ALIGN=BOTTOM ALT="displaymath473" SRC="Noderiv/img10.gif"  > <P>
+<P> <IMG WIDTH=427 HEIGHT=43 ALIGN=BOTTOM ALT="displaymath515" SRC="Noderiv/img40.gif"  > <P>
+<P> <IMG WIDTH=451 HEIGHT=43 ALIGN=BOTTOM ALT="displaymath516" SRC="Noderiv/img41.gif"  > <P>
+<P> <IMG WIDTH=400 HEIGHT=43 ALIGN=BOTTOM ALT="displaymath517" SRC="Noderiv/img42.gif"  > <P>
+Tous les termes de la s&#233;rie &#233;tant positifs, la somme est sup&#233;rieure &#224; son premier terme, d'o&#249; <BR>
+<P>
+ <IMG WIDTH=73 HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline576" SRC="Noderiv/img43.gif"  > , mais
+<IMG WIDTH=95 HEIGHT=33 ALIGN=MIDDLE ALT="tex2html_wrap_inline578" SRC="Noderiv/img44.gif"  > ,d'o&#249;  <IMG WIDTH=68 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline580" SRC="Noderiv/img45.gif"  >  et
+ <IMG WIDTH=177 HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline582" SRC="Noderiv/img46.gif"  > <BR> 
+<BR> 
+Suposons que l'on ait:  <IMG WIDTH=106 HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline584" SRC="Noderiv/img47.gif"  >  ce qui donne
+<IMG WIDTH=80 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline586" SRC="Noderiv/img48.gif"  >  soit  <IMG WIDTH=80 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline588" SRC="Noderiv/img49.gif"  >  <BR> 
+et
+<BLOCKQUOTE>  <IMG WIDTH=338 HEIGHT=22 ALIGN=BOTTOM ALT="math250" SRC="Noderiv/img50.gif"  > </BLOCKQUOTE>
+mais comme nous avons choisi  <IMG WIDTH=162 HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline590" SRC="Noderiv/img51.gif"  > 
+<BLOCKQUOTE>  <IMG WIDTH=338 HEIGHT=94 ALIGN=BOTTOM ALT="math265" SRC="Noderiv/img52.gif"  > </BLOCKQUOTE>
+Quand <I>m</I> tend vers l'infini <I>h</I> tend vers 0 car  <IMG WIDTH=68 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline580" SRC="Noderiv/img45.gif"  >  et
+l'expression  <IMG WIDTH=117 HEIGHT=34 ALIGN=MIDDLE ALT="tex2html_wrap_inline598" SRC="Noderiv/img53.gif"  >  tend vers l'infini car <I>ab</I> &gt; 1.
+Il n'existe pas de d&#233;riv&#233;e d&#233;termin&#233;e.
+<BR> <P>
+<H1><A NAME="SECTION00030000000000000000">Les travaux de Dini (1854 - 1918)</A></H1>
+<P>
+Quand Weierstrass eut exhib&#233; cette fonction, les math&#233;maticiens s'&#233;tonnent de ces nouveaut&#233;s et
+vont se diviser en deux clans: les math&#233;maticiens qui comme Hermite consid&#232;rent ces nouvelles
+venues comme des anomalies et ceux qui, comme Dini, vont se passionner pour ces questions nouvelles.<BR>
+<P>
+Dini g&#233;n&#233;ralise le cas particulier de Weierstrass et &#233;tudie les conditions que doivent
+v&#233;rifier les s&#233;ries enti&#232;res pour converger vers des fonctions continues non d&#233;rivables
+et met ainsi en &#233;vidence toute une classe de telles fonctions en examinant comment chaque fonction de la
+s&#233;rie doit osciller pour conduire aux conditions de non d&#233;rivabilit&#233;.<BR>
+<P>
+Voici ici r&#233;sum&#233;es des conditions &#224; v&#233;rifier pour fabriquer des fonctions continues
+non d&#233;rivables.<BR>
+<P>
+Consid&#233;rons une suite de fonctions continues et d&#233;rivables sur l'intervalle [<I>a</I>,<I>b</I>]
+que nous noterons  <IMG WIDTH=39 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline612" SRC="Noderiv/img54.gif"  > . Nous allons d&#233;finir la fonction somme des termes de
+cette suite:
+<P> <IMG WIDTH=310 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath602" SRC="Noderiv/img55.gif"  > <P>
+Le calcul de la d&#233;riv&#233;e de cette fonction nous permet d'&#233;crire:
+<P> <IMG WIDTH=633 HEIGHT=46 ALIGN=BOTTOM ALT="displaymath603" SRC="Noderiv/img56.gif"  > <P>
+O&#249;  <IMG WIDTH=44 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline614" SRC="Noderiv/img57.gif"  >  repr&#233;sente le reste de la s&#233;rie.<BR>
+<P>
+Les conditions pour que <I>F</I>(<I>x</I>) existe et ne soit d&#233;rivable en aucun point de l'intervalle [<I>a</I>,<I>b</I>] sont
+les suivantes:
+<OL><LI> la s&#233;rie <P> <IMG WIDTH=283 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath604" SRC="Noderiv/img58.gif"  > <P> est uniformenent convergente.<LI>
+<IMG WIDTH=39 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline612" SRC="Noderiv/img54.gif"  >  a un nombre fini de maxima et de minima dans l'intervalle [<I>a</I>,<I>b</I>]
+et ce nombre croit ind&#233;finiment avec <I>n</I>.<LI> Les maxima et les minima se succ&#232;dent &#224; une distance qui tend vers 0 quand
+n croit.<LI> on a  <IMG WIDTH=115 HEIGHT=30 ALIGN=MIDDLE ALT="tex2html_wrap_inline626" SRC="Noderiv/img59.gif"  >  avec
+<IMG WIDTH=22 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline628" SRC="Noderiv/img60.gif"  >  l'amplitude minimale des oscillations de  <IMG WIDTH=42 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline630" SRC="Noderiv/img61.gif"  >  et
+ <IMG WIDTH=18 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline632" SRC="Noderiv/img62.gif"  >  la plus grande distance entre un maximun et et un minimum cons&#233;cutifs.<LI>
+on a <P> <IMG WIDTH=334 HEIGHT=46 ALIGN=BOTTOM ALT="displaymath605" SRC="Noderiv/img63.gif"  > <P> pour tout <I>m</I>, avec
+ <IMG WIDTH=267 HEIGHT=32 ALIGN=MIDDLE ALT="tex2html_wrap_inline636" SRC="Noderiv/img64.gif"  >  et  <IMG WIDTH=171 HEIGHT=32 ALIGN=MIDDLE ALT="tex2html_wrap_inline638" SRC="Noderiv/img65.gif"  > </OL>
+<P>
+<IMG SRC="../Icones/Dini.xbm">
+<P>
+<H1><A NAME="SECTION00040000000000000000">Exemples</A></H1>
+<P>
+On peut donner un grand nombre d'exemples de telles fonctions:
+<P> <IMG WIDTH=326 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath640" SRC="Noderiv/img66.gif"  > <P>
+<P> <IMG WIDTH=326 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath641" SRC="Noderiv/img67.gif"  > <P>
+<P> <IMG WIDTH=323 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath642" SRC="Noderiv/img68.gif"  > <P>
+<P> <IMG WIDTH=323 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath643" SRC="Noderiv/img69.gif"  > <P>
+avec les conditions suppl&#233;mentaires:
+<BLOCKQUOTE>  <IMG WIDTH=59 HEIGHT=27 ALIGN=MIDDLE ALT="tex2html_wrap_inline654" SRC="Noderiv/img70.gif"  >  converge et  <IMG WIDTH=15 HEIGHT=14 ALIGN=MIDDLE ALT="tex2html_wrap_inline656" SRC="Noderiv/img71.gif"  >  constante<BR> 
+<IMG WIDTH=13 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline658" SRC="Noderiv/img72.gif"> tend vers l'infini avec <I>n</I> et
+<IMG WIDTH=30 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline662" SRC="Noderiv/img73.gif"  >  ne tendant pas vers 0 avec <I>n</I>
+et  <IMG WIDTH=17 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline666" SRC="Noderiv/img74.gif"  >  suite d'entiers croissants avec <I>n</I><BR> 
+<I>sn</I> et <I>cn</I> sont les respectivement les sinus et cosinus elliptiques.
+</BLOCKQUOTE>
+On peut citer d'autres exemples:
+<P> <IMG WIDTH=353 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath644" SRC="Noderiv/img75.gif"  > <P>
+<P> <IMG WIDTH=347 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath645" SRC="Noderiv/img76.gif"  > <P>
+avec ici  <IMG WIDTH=75 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline674" SRC="Noderiv/img77.gif"  >  <BR> 
+Citons aussi la fonction de Van Den Warden plus r&#233;cente dont l'&#233;tude est un
+plus simple que le travail original de Weierstrass, et dont on trouvera le d&#233;tail
+dans [CHA] page 140.
+<P> <IMG WIDTH=287 HEIGHT=44 ALIGN=BOTTOM ALT="displaymath646" SRC="Noderiv/img78.gif"  > <P>
+avec <I>d</I>(<I>z</I>) repr&#233;sentant l'entier le plus proche de <I>z</I>.<BR> 
+<BR> 
+Ces fonctions sont &#224; peu pr&egrave;s impossibles &#224; dessiner. Cependant
+Bolzano a donn&#233; un exemple de telle fonction bas&#233;e sur une suite de fonctions
+affines par morceaux dont on peut visualiser les &#233;tapes et ainsi se faire
+une id&#233;e de l'allure de la fonction. On trouvera cette fonction d&#233;taill&#233;e
+dans [CHA] page 141.<BR>
+<P>
+Ces fonctions continues sans d&#233;riv&#233;e ne sont pas exceptionnelles. Banach
+a montr&#233; que dans un certain sens elles sont bien plus nombreuses que les
+classiques fonctions continues d&#233;rivables. De mani&#232;re un peu plus pr&#233;cise
+on munit l'espace vectoriel  <IMG WIDTH=52 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline680" SRC="Noderiv/img79.gif"  >  des fonctions continues sur [<I>a</I>,<I>b</I>]
+de la norme de la convergence uniforme:  <IMG WIDTH=176 HEIGHT=25 ALIGN=MIDDLE ALT="tex2html_wrap_inline684" SRC="Noderiv/img80.gif"  > ,
+on en fait ainsi un espace vectoriel topologique norm&#233; dont on peut montrer qu'il est
+complet pour cette norme.
+<P>
+On appelle ensemble maigre d'un espace topologique un ensemble obtenu comme union
+finie de ferm&#233;s d'int&#233;rieur vide. On montre alors que  <IMG WIDTH=52 HEIGHT=24 ALIGN=MIDDLE ALT="tex2html_wrap_inline680" SRC="Noderiv/img79.gif"  >  n'est pas
+maigre (th&#233;or&#232;me de Baire) et que l'ensemble des fonctions continues d&#233;rivables (sauf peut-&#234;tre
+sur ensemble de mesure nul) est un ensemble maigre pour la topologie ci-dessus
+d&#233;finie. C'est en ce sens que les fonctions continues sans d&#233;riv&#233;e sont
+plus nombreuses que les autres. On trouvera plus de d&#233;tails la dessus dans [VAP] page 120.
+<BR> <P>
+<H1><A NAME="SECTION00050000000000000000">Aspect g&#233;om&#233;trique</A></H1>
+<P>
+Parall&#232;lement &#224; la notion de fonction continue sans d&#233;riv&#233;e s'est
+d&#233;velopp&#233; le concept de courbe sans tangente.
+<P>
+C'est le su&#233;dois Helge Von Koch qui donne le premier un exemple de telle
+courbe. Cette courbe est maintenant devenue classique. Il part d'un segment
+de droite AB dont il remplace le tiers m&#233;dian par un triangle &#233;quilat&#233;ral
+dont il a enlev&#233; la base. Il obtient ainsi une courbe ACDEB &#224; trois points
+anguleux. Il recommence cette construction sur chacun des segments AC,CD,DE et EB
+et ainsi de suite ind&#233;finiment. A la limite on obtient une courbe, qui n'est pas
+une fonction, et qui ne poss&#232;de aucune tangente en aucun point, car les points anguleux
+forment en ensemble dense dans l'ensemble des points de la courbe.<BR>
+<P>
+<IMG SRC="../Icones/VonK.xbm">
+<P>
+Cette courbe &#224; la particularit&#233; de ne pas &#234;tre rectifiable, c'est-&#224;-dire
+que sa longueur est infinie. En effet on enl&#232;ve dans la construction de la courbe
+un tiers pour le remplacer par deux tiers, ce qui fait qu'&#224; la premi&#232;re
+&#233;tape la longueur de la courbe a &#233;t&#233; multipli&#233;e par  <IMG WIDTH=7 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline688" SRC="Noderiv/img81.gif"  >  et
+qu'&#224; l&#233;tape n sa longueur a &#233;t&#233; multipli&#233;e par  <IMG WIDTH=28 HEIGHT=29 ALIGN=MIDDLE ALT="tex2html_wrap_inline690" SRC="Noderiv/img82.gif"  > .<BR>
+<P>
+Von Koch a modifi&#233; sa construction pour rendre rectifiable la courbe.
+Au lieu d'enlever le tiers m&#233;dian il enl&#232;ve un segment de longueur  <IMG WIDTH=11 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline692" SRC="Noderiv/img83.gif"  > 
+et y place un triangle &#233;quilat&#233;ral. La courbe a alors une longueur valant  <IMG WIDTH=45 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline694" SRC="Noderiv/img84.gif"  >  si <I>l</I> est la
+longueur initiale, et il recommence sur chacun des 4 cot&#233;s restants en
+choisissant un segment de longueur  <IMG WIDTH=12 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline698" SRC="Noderiv/img85.gif"  > . A l'&#233;tape <I>n</I> il obtient une courbe de
+longueur  <IMG WIDTH=100 HEIGHT=28 ALIGN=MIDDLE ALT="tex2html_wrap_inline702" SRC="Noderiv/img86.gif"  > . Si on choisit  <IMG WIDTH=10 HEIGHT=22 ALIGN=MIDDLE ALT="tex2html_wrap_inline704" SRC="Noderiv/img87.gif"  >  pour que la s&#233;rie
+converge, on obtient une courbe de Von Koch rectifiable, seulement Von Koch ne
+peut plus d&#233;montrer qu'elle n'admet aucune tangente. La question de savoir
+s'il y a &#233;quivalence entre courbe sans tangente et courbe non rectifiable
+est un probl&#232;me ouvert en 1906 quand Von Koch publie ses travaux.<BR>
+<P>
+Il y a un grand nombre de telle courbes dont la plus connue &#224; part celle de Von Koch,
+est la courbe de Peano qui passe par tous les points d'un carr&#233; qui est continue
+non rectifiable et bien sur sans tangente. Le monde plus r&#233;cent des
+courbes fractales donne des exemples tr&#232;s spectaculaires, mais ce n'est plus l'objet
+de ce petit expos&#233;.
+<BR> <P>
+<H1><A NAME="SECTION00060000000000000000">Bibliographie</A></H1>
+<P>
+<b>[ENC]</b>
+D'Alembert, &quot;l'Encyclop&#233;die&quot; article &quot;Fonction&quot; Tome VII pp 50-51, 1757
+<P>
+<b>[DBR]</b>
+Du Bois-Reymond, &quot;Der Willkurlichen Functionen reeller Argumente nach irhen
+Aeanderungen in den kleinsten Intervallen&quot;, Journal de Crelle Volume 79, 1875
+<P>
+<b>[UDI]</b>
+Ulisse Dini, &quot;Fondamenti per la teorica delle Funzioni di variabili reali&quot;,
+Pise 1878
+<P>
+<b>[GOU]</b>
+Goursat, &quot;Cours d'analyse math&#233;matique&quot;, Gauthiers-Villars.
+<P>
+<b>[VKO]</b>
+Helge Von Koch, &quot;Une m&#233;thode g&#233;om&#233;trique &#233;l&#233;mentaire
+pour l'&#233;tude de certaines questions de la th&#233;orie des courbes planes&quot;,
+Acta mathematica Tome 30 pp 145-174, 1906
+<P>
+<b>[HUM]</b>
+Pierre Humbert, &quot;Histoire des sciences&quot;,
+Collection La Pl&#233;iade, 1957  pp 684-686
+<P>
+<b>[CHA]</b>
+Chambadal et Ovaert &quot;Cours de math&#233;mathique; analyse II&quot;, Gauthier-Villars,
+pp 140-142 
+<P>
+<b>[VAP]</b>
+J. Vauthier, J.J. Prat, &quot;Cours d'analyse math&#233;matique de l'agr&#233;gation&quot;, Masson.
+<P>
+ </DL><BR> <HR>
+<A HREF="index.html"><IMG SRC="../Icones/back.xbm"> </A> Retour
+<A HREF="noderiv.html"><IMG SRC="../Icones/up.xbm"> </A> d&eacute;but
+<A HREF="plan.html"><IMG SRC="../Icones/plan.xbm"> </A>Plan
+<A HREF="../index.html"><IMG SRC="../Icones/home.gif"> </A> Home Andr&eacute; Brouty
+</BODY>
+</HTML>

@@ -1,0 +1,8 @@
+pic: pic.c
+	cc -o $@ $< -lm
+	strip $@
+
+ec: ec.c
+	cc -o $@ $< -lm
+	strip $@
+
