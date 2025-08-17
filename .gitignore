@@ -1,0 +1,42 @@
+# === Ignorer tous les PDF ===
+*.[Pp][Dd][Ff]
+
+# === Windows ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# === Logs ===
+*.log
+*.tmp
+
+# === IDE / éditeurs ===
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === Node.js (si projet JS) ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Python (si projet Python) ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.env
+
+# === Autres fichiers temporaires ===
+*.bak
+*.old
+*.orig
+*.cache
+.DS_Store

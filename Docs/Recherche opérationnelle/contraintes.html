@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+   
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   
+  <meta name="description" content="Intelligence Artificielle - Résolution automatique de problèmes -">
+   
+  <meta name="keywords" content="contraintes">
+   
+  <meta name="resource-type" content="document">
+   
+  <meta name="distribution" content="global">
+   
+  <meta name="GENERATOR" content="Mozilla/4.08 [en] (X11; I; HP-UX B.10.20 9000/715) [Netscape]"><title>Intelligence Artificielle - Résolution automatique de problèmes -</title><!-- Changed by: Christine SOLNON,  1-Sep-1998 --></head><body lang="EN">
+<center>
+<h1><b>Intelligence Artificielle<br>
+- Résolution automatique de problèmes -</b></h1>
+</center>
+<center><b>Christine Solnon</b>
+<p><b>1997</b><br>
+</p>
+</center>
+<br>
+Remarque préliminaire : ce support de cours correspond à un
+module de 20 heures, destiné à des étudiants en deuxième
+année d'IUT. Ce cours n'est plus maintenu...
+<p><br>
+</p>
+<p></p>
+<hr>
+<ol>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#pb_de_rech">Problèmes
+de plannification</a></li>
+  <ul>
+    <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#defi_pb">Qu'est
+ce qu'un problème de plannification ?</a></li>
+    <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#defi_arbre">Comment
+résoudre un problème de plannification ?</a></li>
+    <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#types">Différents
+types de problèmes de plannification&nbsp;</a></li>
+    <li>Exemples de problèmes de plannification</li>
+    <ul>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/robot.html">Le
+robot</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/chaine.html">La
+chaîne de production</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/compte.html">Le
+``compte est bon''</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/taquin.html">Le
+taquin</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/solitaire.html">Le Solitaire</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/amos_judd.html">Amos Judd</a></li>
+    </ul>
+  </ul>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#csp" name="tex2html6">Problèmes de satisfaction de contraintes (CSP)</a></li>
+  <ul>
+    <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#csp_def" name="tex2html7">Qu'est ce qu'un CSP ?</a></li>
+    <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/contraintes.html#csp_solve" name="tex2html11">Comment résoudre un CSP ?</a></li>
+    <li>Exemples de CSP</li>
+    <ul>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/zebre.html">Le
+zèbre</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/reines.html">Les
+reines</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/carte.html">Le
+coloriage de la carte</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/hubert.html">A
+qui parle Hubert ?</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/cadeaux.html">Les
+cadeaux</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/voisins.html">Les
+voisins</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/ages.html">Les
+ages</a></li>
+      <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/master.html">Le
+MasterMind</a></li>
+    </ul>
+  </ul>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/biblio.html">Bibliographie</a></li>
+</ol>
+<p><br>
+</p>
+<hr>
+<h1><a name="pb_de_rech"></a>1. Problèmes de plannification</h1>
+De nombreux problèmes d'intelligence artificielle, pour lesquels on
+ne connait souvent pas d'algorithme déterministe, relèvent du
+problème général de plannification : étant donnés
+un état initial, un état final et un ensemble d'actions élémentaires
+``valides'' permettant de passer d'un état à un autre, l'objectif
+est de trouver une séquence d'actions à exécuter pour
+passer de l'état initial à l'état final. La résolution
+automatique de ces problèmes consiste à essayer successivement
+toutes les possibilités jusqu'à trouver une solution. Cette
+recherche est fortement combinatoire : à partir d'un état donné,
+on peut généralement effectuer plusieurs actions élémentaires
+différentes qui débouchent sur des états différents.
+L'``intelligence'' consiste à trouver de bonnes règles -- appelées
+heuristiques -- permettant de choisir en premier les actions ``ayant le plus
+de chance d'aboutir''.<br>
+&nbsp;<br>
+&nbsp;
+<h3><a name="defi_pb"></a>1.a. Qu'est ce qu'un problème de plannification
+?</h3>
+Plus formellement, un problème de plannification sera défini
+par un quadruplet&nbsp;<img src="contraintes_fichiers/img1.gif" alt="tex2html_wrap_inline368" align="middle" height="24" width="82">tel que
+<ul>
+  <li><i>S</i> est un ensemble (éventuellement infini) d'états,</li>
+  <li><img src="contraintes_fichiers/img2.gif" alt="tex2html_wrap_inline372" align="middle" height="22" width="47">est l'état initial,</li>
+  <li><img src="contraintes_fichiers/img3.gif" alt="tex2html_wrap_inline374" align="middle" height="24" width="42">est l'ensemble des états finaux,</li>
+  <li><i>T</i> est la fonction de transition qui associe à chaque
+état&nbsp;<img src="contraintes_fichiers/img4.gif" alt="tex2html_wrap_inline378" align="middle" height="22" width="14">de <i>S</i> l'ensemble des couples&nbsp;<img src="contraintes_fichiers/img5.gif" alt="tex2html_wrap_inline382" align="middle" height="25" width="54">tels que&nbsp;<img src="contraintes_fichiers/img6.gif" alt="tex2html_wrap_inline384" align="middle" height="23" width="16">est
+une action élémentaire permettant de passer de l'état<img src="contraintes_fichiers/img4.gif" alt="tex2html_wrap_inline378" align="middle" height="22" width="14">à l'état&nbsp;<img src="contraintes_fichiers/img7.gif" alt="tex2html_wrap_inline388" align="middle" height="23" width="15">.</li>
+</ul>
+<h3><a name="defi_arbre"></a>1.b. Comment résoudre un problème
+de plannification ?</h3>
+Résoudre un problème de plannification <img src="contraintes_fichiers/img1.gif" alt="tex2html_wrap_inline368" align="middle" height="24" width="82">consiste
+à trouver une séquence
+<p><img src="contraintes_fichiers/img8.gif" alt="displaymath366" align="bottom" height="20" width="433"></p>
+<p>telle que&nbsp;<img src="contraintes_fichiers/img9.gif" alt="tex2html_wrap_inline390" align="middle" height="24" width="117">,&nbsp;<img src="contraintes_fichiers/img10.gif" alt="tex2html_wrap_inline392" align="middle" height="24" width="119">, ...,&nbsp;<img src="contraintes_fichiers/img11.gif" alt="tex2html_wrap_inline394" align="middle" height="24" width="138">et&nbsp;<img src="contraintes_fichiers/img12.gif" alt="tex2html_wrap_inline396" align="middle" height="22" width="50">.</p>
+<p>Pour cela, on peut effectuer une recherche globale et complète a
+travers l'espace des états, en construisant un <i>arbre de recherche</i>.
+L'arbre de recherche associé au problème&nbsp;<img src="contraintes_fichiers/img1.gif" alt="tex2html_wrap_inline368" align="middle" height="24" width="82">est tel que:</p>
+<ul>
+  <li>sa racine est étiquetée par l'état initial&nbsp;<img src="contraintes_fichiers/img13.gif" alt="tex2html_wrap_inline400" align="middle" height="22" width="16">,</li>
+  <li>chaque noeud est étiqueté par un état de <i>S</i>,</li>
+  <li>chaque noeud interne est étiqueté par un état
+non final&nbsp;<img src="contraintes_fichiers/img4.gif" alt="tex2html_wrap_inline378" align="middle" height="22" width="14">de <i>S</i>-<i>F</i> de sorte que
+si&nbsp;<img src="contraintes_fichiers/img14.gif" alt="tex2html_wrap_inline408" align="middle" height="24" width="222">, alors&nbsp;<img src="contraintes_fichiers/img4.gif" alt="tex2html_wrap_inline378" align="middle" height="22" width="14">a <i>n</i>
+fils respectivement étiquetés par&nbsp;<img src="contraintes_fichiers/img15.gif" alt="tex2html_wrap_inline414" align="middle" height="22" width="15">, ...,&nbsp;<img src="contraintes_fichiers/img16.gif" alt="tex2html_wrap_inline416" align="middle" height="22" width="17">.</li>
+</ul>
+Une solution d'un problème&nbsp;<img src="contraintes_fichiers/img1.gif" alt="tex2html_wrap_inline368" align="middle" height="24" width="82">est
+alors un chemin dans l'arbre de recherche associé allant de la racine
+de l'arbre à une feuille étiquetée par un état
+final.
+<p>Remarques:</p>
+<ul>
+  <li>Le parcours de l'arbre peut s'effectuer selon différents ordres:
+en largeur d'abord, en profondeur d'abord ou encore selon un ordre défini
+par des heuristiques.</li>
+  <li>Cette recherche peut "boucler", quand une suite d'actions amène
+à un état par lequel on est déja passé. Une telle
+branche doit alors être coupée.</li>
+  <li>Si le problème admet un nombre infini d'états, certaines
+branches peuvent être infinies.<br>
+    <br>
+  </li>
+</ul>
+<h4><b>Algorithme de plannification</b><b> en profondeur d'abord:</b></h4>
+Construction de l'arbre ``en profondeur'', et recherche de la premiere solution
+ayant moins de K transitions.<br>
+Schéma d'appel de l'algorithme: <font face="Courier New,Courier">cherche(<i>E_0,{E_0},K</i>)</font>
+<blockquote><small><u><font face="Courier New,Courier">fonction</font></u><font face="Courier New,Courier">cherche(<i>E_i</i>, <i>Deja_vus</i>, <i>N</i>)&nbsp;
+  <u>retourne</u> un booleen</font><br>
+  <font face="Courier New,Courier">-- cherche(<i>Ei,Deja_vus,N</i>) = vrai</font>
+  <br>
+  <font face="Courier New,Courier">-- s'il existe une solution a <i>(S,E_i,F,T)</i>
+en moins de <i>N</i>&nbsp; transitions.</font><br>
+  <font face="Courier New,Courier">-- <i>Deja_vus</i> est l'ensemble des
+etats par lesquels on est passe pour aller de <i>E_0</i> a <i>E_i</i>.</font>
+  <br>
+  <u><font face="Courier New,Courier">debut</font></u></small>
+  <blockquote><small><font face="Courier New,Courier"><u>si</u> <i>E_i</i>
+est un etat final de <i>F</i>&nbsp; <u>alors</u> <u>retourner</u> vrai <u>fi</u>nsi</font>
+    <br>
+    <font face="Courier New,Courier"><u>si</u> <i>N=0</i> <u>alors</u>retourner
+faux <u>finsi</u></font><br>
+    <font face="Courier New,Courier"><u>Pour</u> tout couple (<i>A_j,E_j)</i>&nbsp;
+faisant partie de <i>T(E_i)</i></font><br>
+    <font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp; et tel que<i>E_j</i>
+n'appartienne pas a <i>Deja_vus&nbsp;&nbsp; </i><u>faire</u></font></small>
+    <blockquote><small><font face="Courier New,Courier"><u>si</u> cherche(<i>E_j,
+Deja_vus U {E_j},N-1</i>)=vrai</font><br>
+      <font face="Courier New,Courier"><u>alors</u> afficher(<i>A_j,E_j</i>)</font>
+      <br>
+      <font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; retourner
+vrai</font><br>
+      <u><font face="Courier New,Courier">finsi</font></u></small></blockquote>
+    <small><u><font face="Courier New,Courier">finpour</font></u></small>
+    <br>
+    <small><font face="Courier New,Courier"><u>retourner</u> faux</font></small></blockquote>
+  <small><u><font face="Courier New,Courier">fin</font></u></small></blockquote>
+<h3><a name="types"></a>1.c. Différents types de problèmes
+de plannification</h3>
+On distingue essentiellement trois types de problèmes de plannification
+:
+<ul>
+  <li>les problèmes de <i>recherche d'une solution quelconque </i>(la
+première trouvée). Dans ce cas, il s'agit de construire un arbre
+de recherche jusqu'à trouver la première feuille succès.
+La construction de l'arbre peut se faire dans un ordre fixé à
+l'avance (généralement en profondeur d'abord) ; mais on peut
+aussi introduire des heuristiques guidant la recherche et permettant d'explorer
+en premier les branches de l'arbre qui apparaissent comme plus prometteuses.</li>
+</ul>
+<ul>
+  <li>les problèmes de <i>recherche de toutes les solutions</i>. Dans
+ce cas, il s'agit de trouver toutes les feuilles succès, et l'arbre
+doit être construit dans sa totalité. Ce type de problème
+peut être optimisé en introduisant des règles permettant
+de couper le plus tot possible les branches ne menant à aucune feuille
+succès.<br>
+    <br>
+  </li>
+  <li>les problèmes de <i>recherche de la "meilleure" solution</i>
+(en fonction d'un critère donné). Dans ce cas, il faut construire
+l'arbre dans sa totalité pour trouver toutes les solutions et choisir,
+parmi toutes les solutions, la meilleure. Là encore, certaines branches
+peuvent être coupées, dès lors que l'on est certain qu'elles
+ne mènent à aucune feuille succès, ou qu'elles mènent
+à des solutions moins bonnes qu'une solution déjà trouvée.</li>
+</ul>
+<h3>1.d. Exemples de problème de plannification</h3>
+<ul>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/robot.html">Le robot</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/chaine.html">La chaîne
+de production</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/compte.html">Le ``compte
+est bon''</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/taquin.html">Le taquin</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/solitaire.html">Le
+Solitaire</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/amos_judd.html">Amos
+Judd</a></li>
+</ul>
+<hr>
+<h1><a name="csp"></a>2. Problèmes de Satisfaction de Contraintes</h1>
+De nombreux problèmes sont définis en termes de contraintes
+(de temps, d'espace, ... ou plus généralement de ressources):
+<ul>
+  <li>les problèmes de planification et ordonnancement: planifier
+une production, gérer un trafic ferroviaire, ...</li>
+  <li>les problèmes d'affectation de ressources: établir un
+emploi du temps, allouer de l'espace mémoire, du temps cpu par un
+système d'exploitation, affecter du personnel à des tâches,
+des entrepôts à des marchandises, ...</li>
+  <li>les problèmes d'optimisation: optimiser des placements financiers,
+des découpes de bois, des routages de réseaux de télécommunication,
+...</li>
+  <li>etc., ...</li>
+</ul>
+Ces différents problèmes sont désignés par le
+terme générique CSP (Constraint Satisfaction Problems), et
+ont la particularité commune d'être fortement combinatoires:
+il faut envisager un grand nombre de combinaisons avant de trouver une solution.
+La programmation par contraintes est un ensemble de méthodes et algorithmes
+qui tentent de résoudre ces problèmes de la façon la
+plus efficace possible.
+<h3><a name="csp_def"></a>2.a. Qu'est ce qu'un CSP ?</h3>
+Un CSP (Problème de Satisfaction de Contraintes) est un problème
+modélisé sous la forme de contraintes.
+<h4>Définition</h4>
+Un CSP est un triplet (<i>X</i>,<i>D</i>,<i>C</i>) tel que
+<ul>
+  <li><img src="contraintes_fichiers/img27.gif" alt="tex2html_wrap_inline460" align="middle" height="24" width="147">est un ensemble de <i>n</i> variables.</li>
+  <li><i>D</i> est la fonction qui associe à chaque variable&nbsp;<img src="contraintes_fichiers/img28.gif" alt="tex2html_wrap_inline466" align="middle" height="22" width="17">son domaine&nbsp;<img src="contraintes_fichiers/img29.gif" alt="tex2html_wrap_inline468" align="middle" height="24" width="42">, i.e.,
+l'ensemble des valeurs que peut prendre&nbsp;<img src="contraintes_fichiers/img28.gif" alt="tex2html_wrap_inline466" align="middle" height="22" width="17">.</li>
+  <li><img src="contraintes_fichiers/img30.gif" alt="tex2html_wrap_inline472" align="middle" height="24" width="142">est un ensemble de contraintes. Chaque contrainte&nbsp;<img src="contraintes_fichiers/img31.gif" alt="tex2html_wrap_inline474" align="middle" height="23" width="15">est une relation entre les valeurs que peuvent prendre simultanément
+des variables.</li>
+</ul>
+<h4>Définition</h4>
+Une <i>affectation</i> est un ensemble de couples variable/valeur
+<p><img src="contraintes_fichiers/img32.gif" alt="displaymath476" align="bottom" height="16" width="381"></p>
+<p>tel que&nbsp;<img src="contraintes_fichiers/img33.gif" alt="tex2html_wrap_inline478" align="middle" height="24" width="65">et&nbsp;<img src="contraintes_fichiers/img34.gif" alt="tex2html_wrap_inline480" align="middle" height="24" width="139">.<br>
+Une affectation est <i>partielle</i> si elle ne concerne qu'une partie des
+variables de <i>X</i>, et <i>totale</i> si elle concerne toutes les variables
+de <i>X</i>.<br>
+Une affectation <i>A</i> est <i>valide</i> par rapport à un ensemble
+de contraintes <i>C</i> si pour toute contrainte&nbsp;<img src="contraintes_fichiers/img35.gif" alt="tex2html_wrap_inline490" align="middle" height="22" width="14">de <i>C</i>, la relation définie par&nbsp;<img src="contraintes_fichiers/img35.gif" alt="tex2html_wrap_inline490" align="middle" height="22" width="14">est vraie pour les valeurs des variables définies
+dans <i>A</i>.<br>
+&nbsp;<br>
+&nbsp;</p>
+<h4>Définition</h4>
+Une <i>solution</i> d'un CSP est une affectation totale et valide.<br>
+&nbsp;<br>
+&nbsp;
+<h3><a name="csp_solve"></a>2.b. Comment résoudre un CSP ?</h3>
+Certains CSPs bien délimités peuvent être résolus
+par des algorithmes spécialisés. Ces algorithmes tirent parti
+de leur connaissance sur la forme des contraintes ou sur le domaine des variables
+(CSP numériques, CSP booléens). L'objet de ce cours n'est pas
+d'étudier ces algorithmes spécialisés, mais de voir
+un certain nombre d'algorithmes généraux, qui peuvent être
+appliqués à n'importe quel CSP sur des domaines finis. Ces
+algorithmes sont parfois moins efficaces que des algorithmes spécialisés,
+mais ils peuvent être appliqués directement. Ces algorithmes
+sont notamment implémentés dans Charme, Chip, Ilog solver,
+Spart, clp(FD), PrologIV et Oz.
+<p>D'une façon générale, un CSP est un cas particulier
+de problème de plannification: les états sont des affectations
+valides (partielles ou totales), l'état initial est l'affectation
+vide, l'ensemble des état finaux est l'ensemble des affectations valides
+et totales, on passe d'un état à un autre en affectant une
+variable non encore affectée. De façon plus formelle, le CSP
+(<i>X</i>,<i>D</i>,<i>C</i>) correspond au problème<img src="contraintes_fichiers/img1.gif" alt="tex2html_wrap_inline368" align="middle" height="24" width="82">tel que:</p>
+<ul>
+  <li><img src="contraintes_fichiers/img36.gif" alt="tex2html_wrap_inline502" align="middle" height="24" width="69">est une affectation valide (partielle ou totale)
+de&nbsp;<img src="contraintes_fichiers/img37.gif" alt="tex2html_wrap_inline504" align="middle" height="24" width="72"></li>
+  <li><img src="contraintes_fichiers/img38.gif" alt="tex2html_wrap_inline506" align="middle" height="25" width="46">,</li>
+  <li><img src="contraintes_fichiers/img39.gif" alt="tex2html_wrap_inline508" align="middle" height="24" width="70">est une affectation valide et totale },</li>
+  <li><img src="contraintes_fichiers/img40.gif" alt="tex2html_wrap_inline510" align="middle" height="42" width="643"></li>
+</ul>
+Remarques:
+<ul>
+  <li>Le résultat qui nous intéresse est l'état final
+obtenu (i.e., l'affectation totale et valide), et non l'enchaînement
+d'actions qui a permis de l'obtenir.</li>
+  <li>Toutes les solutions d'un CSP sont généralement également
+bonnes et ont la même taille. Par conséquent, les heuristiques
+sont introduites non pas pour trouver une meilleure solution, mais pour trouver
+plus rapidement une solution.</li>
+  <li>Il y a un nombre fini d'états et on ne peut pas passer 2 fois
+par un même état. Par conséquent, l'arbre de recherche
+est forcément fini (on n'a pas besoin de limiter la profondeur de l'arbre
+ni de vérifier que l'on ne passe pas 2 fois par le même état).</li>
+</ul>
+<h4>L'algorithme "simple backtrack"</h4>
+Principe: On affecte successivement des valeurs aux variables. A chaque fois
+qu'on affecte une valeur à une nouvelle variable, on vérifie
+que la nouvelle affectation est valide. Cet algorithme correspond à
+un parcours en profondeur d'abord de l'arbre de recherche.
+<pre><b>fonction</b> simple_backtrack( <b><i>X,D,C</i></b> ) <b>retourne</b> une affectation</pre>
+<pre>&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img42.gif" alt="tex2html_wrap_inline514" align="middle" height="27" width="43">&nbsp;<br>&nbsp;&nbsp;&nbsp; <b>Pour</b> <i>i</i> <b>de</b> 1 <b>a</b> <i>n</i> <b>faire<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>/* l'affectation partielle&nbsp;&nbsp;<img src="contraintes_fichiers/img43.gif" alt="tex2html_wrap_inline522" align="middle" height="24" width="224">&nbsp; est valide */&nbsp;<br></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choix (*) d'une valeur&nbsp;&nbsp;<img src="contraintes_fichiers/img44.gif" alt="tex2html_wrap_inline524" align="middle" height="24" width="74"> ,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>si</b>&nbsp;&nbsp;<img src="contraintes_fichiers/img45.gif" alt="tex2html_wrap_inline526" align="middle" height="24" width="100">&nbsp; est valide <b>alors</b>&nbsp;&nbsp;<img src="contraintes_fichiers/img46.gif" alt="tex2html_wrap_inline528" align="middle" height="24" width="137">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>sinon</b> retour arriere au dernier point de choix (*) <b>finsi<br></b>&nbsp;&nbsp;&nbsp; <b>finpour<br></b>&nbsp;&nbsp;&nbsp; <b>retourne</b> A</pre>
+Cet algorithme permet de construire de façon incrémentale une
+suite de valeurs cohérentes entre elles. Cet algorithme peut être
+amélioré, notamment:
+<ul>
+  <li>en supprimant dans les domaines des variables non affectées
+les valeurs qui sont incompatibles avec l'affectation partielle courante:
+utilisation de techniques d'anticipation (``look ahead'') par vérification
+en avant (``forward checking'') ou maintien de la consistance d'arc (``arc
+consistency''), ou autre consistance partielle,</li>
+  <li>en affectant les variables dont le domaine est le plus petit en priorité,</li>
+  <li>en faisant des retours arrières non pas au dernier point de
+choix, mais à des points de choix ``critiques'' (à l'origine
+de l'échec).</li>
+</ul>
+<h4>L'algorithme d'``anticipation par vérification en avant''</h4>
+Principe: On affecte successivement des valeurs aux variables. A chaque fois
+qu'on affecte une valeur à une nouvelle variable, on supprime du domaine
+des variables non affectées les valeurs qui ne sont pas compatibles
+avec l'affectation partielle.
+<pre><b>fonction</b> anticipation(&nbsp;<img src="contraintes_fichiers/img41.gif" alt="tex2html_wrap_inline512" align="middle" height="24" width="161"> ) <b>retourne</b> une affectation<br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img42.gif" alt="tex2html_wrap_inline514" align="middle" height="27" width="43">&nbsp;<br>&nbsp;&nbsp;&nbsp; <b>Pour</b> <i>i</i> <b>de</b> 1 <b>a</b> <i>n</i> <b>faire<br></b>&nbsp;&nbsp;&nbsp; <i>/* l'affectation partielle&nbsp;&nbsp;<img src="contraintes_fichiers/img43.gif" alt="tex2html_wrap_inline522" align="middle" height="24" width="224">&nbsp; est valide */<br></i>&nbsp;&nbsp;&nbsp; <i>/* et&nbsp;&nbsp;<img src="contraintes_fichiers/img47.gif" alt="tex2html_wrap_inline542" align="middle" height="25" width="253">&nbsp; est valide */<br></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choix (*) d'une valeur&nbsp;&nbsp;<img src="contraintes_fichiers/img44.gif" alt="tex2html_wrap_inline524" align="middle" height="24" width="74"> ,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img46.gif" alt="tex2html_wrap_inline528" align="middle" height="24" width="137">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Pour</b> <i>j</i> <b>de</b> <i>i</i>+1 <b>a</b> <i>n</i> <b>faire<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img48.gif" alt="tex2html_wrap_inline554" align="middle" height="25" width="268">&nbsp; est valide }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>si</b>&nbsp;&nbsp;<img src="contraintes_fichiers/img49.gif" alt="tex2html_wrap_inline556" align="middle" height="27" width="73">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>alors</b> retour arriere au dernier point de choix (*) <b>finsi<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>finpour<br></b>&nbsp;&nbsp;&nbsp; <b>finpour<br></b>&nbsp;&nbsp;&nbsp; <b>retourne</b> A</pre>
+&nbsp;<br>
+<p>&nbsp;</p>
+<h4>L'algorithme ``choix du plus petit domaine''</h4>
+Principe: A chaque itération, on choisit d'affecter la variable dont
+le domaine est le plus petit, puis on restreint les domaines des variables
+non affectées par vérification en avant.
+<pre><b>fonction</b> min_domaine(&nbsp;<img src="contraintes_fichiers/img41.gif" alt="tex2html_wrap_inline512" align="middle" height="24" width="161"> ) <b>retourne</b> une affectation<br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img42.gif" alt="tex2html_wrap_inline514" align="middle" height="27" width="43">&nbsp;<br>&nbsp;&nbsp;&nbsp; <b>Pour</b> <i>i</i> <b>de</b> 1 <b>a</b> <i>n</i> <b>faire<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Soit&nbsp;&nbsp;<img src="contraintes_fichiers/img50.gif" alt="tex2html_wrap_inline568" align="middle" height="22" width="19">&nbsp; la variable de <i>X</i> non affectee dans <i>A<br></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; et telle que la taille de&nbsp;&nbsp;<img src="contraintes_fichiers/img51.gif" alt="tex2html_wrap_inline574" align="middle" height="24" width="44">&nbsp; soit minimum<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choix (*) d'une valeur&nbsp;&nbsp;<img src="contraintes_fichiers/img52.gif" alt="tex2html_wrap_inline576" align="middle" height="24" width="79"> ,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img53.gif" alt="tex2html_wrap_inline578" align="middle" height="24" width="142">&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Pour</b> toute variable&nbsp;&nbsp;<img src="contraintes_fichiers/img54.gif" alt="tex2html_wrap_inline580" align="middle" height="23" width="18">&nbsp; de <i>X</i>&nbsp; non affectee dans <i>A<br></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>faire<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="contraintes_fichiers/img48.gif" alt="tex2html_wrap_inline554" align="middle" height="25" width="268">&nbsp; est valide }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>si</b>&nbsp;&nbsp;<img src="contraintes_fichiers/img49.gif" alt="tex2html_wrap_inline556" align="middle" height="27" width="73">&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>alors</b> retour arriere au dernier point de choix (*)&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>finsi<br></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>finpour<br></b>&nbsp;&nbsp;&nbsp; <b>finpour<br></b>&nbsp;&nbsp;&nbsp; <b>retourne</b> A</pre>
+&nbsp;
+<h3>2.d. Exemples de CSP</h3>
+<ul>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/zebre.html">Le zèbre</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/reines.html">Les reines</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/carte.html">Le coloriage
+de la carte</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/hubert.html">A qui
+parle Hubert ?</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/cadeaux.html">Les cadeaux</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/voisins.html">Les voisins</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/ages.html">Les ages</a></li>
+  <li><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/master.html">Le MasterMind</a></li>
+</ul>
+<hr>
+<h2><a href="http://bat710.univ-lyon1.fr/%7Ecsolnon/biblio.html">Bibliographie</a></h2>
+<hr>
+<address><i>Christine SOLNON</i></address>
+<br>
+<i>Thu Jul 10 10:26:38 METDST 1997</i>
+
+</body></html>

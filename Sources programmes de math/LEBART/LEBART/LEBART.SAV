@@ -1,0 +1,3152 @@
+C********************************************
+C     ANALYSE EN COMPOSANTES PRINCIPALES
+C********************************************
+      PARAMETER (NDIM=1000,KDIM=300,KFAC=20,MDIM=1301)
+      DIMENSION F(NDIM,KDIM),S(KDIM,KDIM),VP(KDIM),U(NDIM,KFAC)
+     1         ,V(KDIM,KFAC)
+      DIMENSION FI(NDIM),KODI(NDIM),DI(NDIM)
+      DIMENSION FJ(KDIM),KODJ(KDIM)
+      DIMENSION X(MDIM),Y(MDIM)
+      DIMENSION IDI(NDIM),IDJ(KDIM),ID(MDIM)
+      COMMON /ENSOR/LEC,IMP
+      LEC=5
+      IMP=6
+      WRITE(IMP,600) NDIM,KDIM,MDIM,KFAC
+      CALL LIRAF(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,NGRAF,NPAGE,NLIGN,PEX,
+     1           F,KODI,KODJ,IDI,IDJ)
+      IF (NTOT.EQ.N.AND.KTOT.EQ.K) GOTO 10
+      CALL POUSS(MDIM,NDIM,KDIM,NTOT,KTOT,N,K,KODI,KODJ,F,IDI,IDJ,ID)
+10    WRITE(IMP,620)
+      MODK=2
+      CALL KLICO(MODK,NDIM,KDIM,NTOT,KTOT,F,IDI,IDJ)
+      CALL CALFP(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,KFAC,F,FI,FJ,
+     1           S,VP,U,V,DI,IDJ)
+      VPTOT=K
+      MODV=1
+      CALL EDIVP(KDIM,MODV,K,VP,VPTOT)
+      CALL COORP(NDIM,KDIM,KFAC,NTOT,N,KTOT,K,KVVP,U,V,FI,FJ,IDI,IDJ)
+      IF (NGRAF.LE.0) GOTO 50
+      JX=1
+      DO 40 NG=1,NGRAF
+      JY=JX+1
+      IF (JY.GT.KVVP) GOTO 50
+      DO 20 I=1,NTOT
+      X(I)=U(I,JX)
+      Y(I)=U(I,JY)
+20    ID(I)=IDI(I)
+      DO 30 J=1,KTOT
+      I1=NTOT+J
+      X(I1)=V(J,JX)
+      Y(I1)=V(J,JY)
+30    ID(I1)=IDJ(J)
+      MTOT=NTOT+KTOT
+      CALL GPLAN(MDIM,MTOT,JX,JY,X,Y,ID,4,NLIGN,NPAGE,PEX,1)
+40    JX=JY
+50    CONTINUE
+      WRITE(IMP,610)
+      STOP
+600   FORMAT(1H1/1H0,130(1H-)/1H ,50X,23HCOMPOSANTES PRINCIPALES /
+     1       1H /130(1H-)/1H0/1H 24H MAJORANT DE NTOT  NDIM=,I4,17X,
+     2   23HMAJORANT DE KTOT  KDIM=,I4/1H ,
+     3   30HMAJORANT DE NTOT+KTOT+1  MDIM=,I4,10X,
+     4   23HMAJORANT DE KVVP  KFAC=,I4/)
+610   FORMAT(1H1/1H0,130(1H-)//1H ,58X,17HFIN DU TRAITEMENT //
+     1       1H ,130(1H-)/)
+620   FORMAT(1H1/1H0,10X,'TABLEAU DES DONNEES BRUTES ', 
+     1       '(EVENTUELLEMENT PERMUTEES)')
+      END
+C************************************************
+C    ANALYSE FACTORIELLE DES CORRESPONDANCES
+C************************************************
+	PROGRAM ANACO
+      PARAMETER (NDIM=1000,KDIM=300,KFAC=20,MDIM=1301,LDIM=300)
+      DIMENSION F(NDIM,KDIM),S(KDIM,KDIM),VP(KDIM),U(NDIM,KFAC)
+     1         ,V(KDIM,KFAC)
+      DIMENSION FI(NDIM),KODI(NDIM),DI(NDIM)
+      DIMENSION FJ(KDIM),KODJ(KDIM),DJ(KDIM)
+      DIMENSION X(MDIM),Y(MDIM)
+      DIMENSION IDI(NDIM),IDJ(KDIM),ID(MDIM)
+      COMMON /ENSOR/LEC,IMP
+      LEC=5
+      IMP=6
+      WRITE(IMP,600) NDIM,KDIM,MDIM,LDIM,KFAC
+      CALL LIRAF(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,NGRAF,NPAGE,NLIGN,PEX,
+     1           F,KODI,KODJ,IDI,IDJ)
+      IF (NTOT.EQ.N.AND.KTOT.EQ.K) GOTO 10
+      CALL POUSS(MDIM,NDIM,KDIM,NTOT,KTOT,N,K,KODI,KODJ,F,IDI,IDJ,ID)
+10    WRITE(IMP,620)
+      MODK=2
+      CALL KLICO(MODK,NDIM,KDIM,NTOT,KTOT,F,IDI,IDJ)
+      CALL CALFC(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,KFAC,F,FI,FJ,
+     1           S,VP,VPTOT,U,V,DI,DJ)
+      MODE=2
+	KMOD=KVVP+1
+      CALL EDIVP(KDIM,MODE,KMOD,VP,VPTOT)
+      CALL COORC(NDIM,KDIM,KFAC,NTOT,N,KTOT,K,KVVP,VP,U,V,
+     1		   FI,FJ,DI,DJ,IDI,IDJ)
+      IF (NGRAF.LE.0) GOTO 50
+      JX=1
+      DO 40 NG=1,NGRAF
+      JY=JX+1
+      IF (JY.GT.KVVP) GOTO 50
+      DO 20 I=1,NTOT
+      X(I)=U(I,JX)
+      Y(I)=U(I,JY)
+20    ID(I)=IDI(I)
+      DO 30 J=1,KTOT
+      I1=NTOT+J
+      X(I1)=V(J,JX)
+      Y(I1)=V(J,JY)
+30    ID(I1)=IDJ(J)
+      MTOT=NTOT+KTOT
+      CALL GPLAN(MDIM,MTOT,JX,JY,X,Y,ID,4,NLIGN,NPAGE,PEX,1)
+40    JX=JY
+50    CONTINUE
+	KOL=1
+	CALL AIDAC (MDIM,NDIM,KDIM,N,K,KVVP,KFAC,KOL,F,IDI,IDJ,U,V,
+     1			KODI,KODJ,FI,FJ,ID)
+      WRITE(IMP,610)
+      STOP
+600   FORMAT(1H1/1H0,130(1H-)/1H ,10X,27HANALYSE DES CORRESPONDANCES  /
+     1       130(1H-)/1H0,24HMAJORANT DE NTOT  NDIM= ,I4,17X,
+     2   23HMAJORANT DE KTOT  KDIM=,I4/1H ,
+     3   30HMAJORANT DE NTOT+KTOT+1  MDIM=,I4,11X,
+     4	 23HMAJORANT DE K     LDIM=,I4,11X,
+     5   23HMAJORANT DE KVVP  KFAC=,I4/)
+610   FORMAT(1H1/1H0,130(1H-)//1H ,58X,17HFIN DU TRAITEMENT //
+     1       1H ,130(1H-)/)
+620   FORMAT(1H1/1H0,10X,'TABLEAU DES DONNEES BRUTES ', 
+     1       '(EVENTUELLEMENT PERMUTEES)')
+      END
+	SUBROUTINE AIDAC (MDIM,NDIM,KDIM,N,K,KVVP,KFAC,KOL,F,IDI,IDJ,
+     1			   U,V,KODI,KODJ,FI,FJ,ID)
+	COMMON /ENSOR/LEC,IMP
+	DIMENSION F(NDIM,KDIM),U(NDIM,KFAC),V(KDIM,KFAC)
+	DIMENSION IDI(NDIM),IDJ(KDIM),ID(MDIM)
+	DIMENSION KODI(NDIM),KODJ(KDIM),FI(NDIM),FJ(KDIM)
+	DO 10 I=1,N
+10	FI(I)=U(I,KOL)
+	CALL SHELK (N,FI,ID)
+	DO 20 I=1,N
+	KK=ID(I)
+	ID(I)=IDI(KK)
+20	KODI(KK)=I
+	DO 30 I=1,N
+30	IDI(I)=ID(I)
+	DO 40 J=1,K
+40	FJ(J)=V(J,KOL)
+	CALL SHELK (K,FJ,ID)
+	DO 50 J=1,K
+	KK=ID(J)
+	ID(J)=IDJ(KK)
+50	KODJ(KK)=J
+	DO 60 J=1,K
+60	IDJ(J)=ID(J)
+	CALL PERMX (NDIM,KDIM,N,K,F,KODI,KODJ)
+	KPT=0
+	DO 70 I=1,N
+	FI(I)=0.0
+	DO 70 J=1,K
+70	FI(I)=FI(I)+F(I,J)
+	DO 80 J=1,K
+	FJ(J)=0.0
+	DO 80 I=1,N
+80	FJ(J)=FJ(J)+F(I,J)
+	DO 90 J=1,K
+	DO 90 I=1,N
+90	F(I,J)=(F(I,J)*1000.0)/FI(I)
+	WRITE (IMP,600)
+	KODK=3
+	GOTO 120
+100	CONTINUE
+	DO 110 J=1,K
+	DO 110 I=1,N
+110	F(I,J)=(F(I,J)/FJ(J))*FI(I)
+	WRITE (IMP,610)
+120	KPT=KPT+1
+	CALL KLICO (KODK,NDIM,KDIM,N,K,F,IDI,IDJ)
+	IF (KPT.EQ.1) GOTO 100
+600	FORMAT (1H1/1H0,40X,33HDONNEES RANGEES SUR LE FACTEUR 1   //
+     1	     1H ,32X,44HPROFILS DES LIGNES (SOMME D'UNE LIGNE=1000)  )
+610	FORMAT (1H1/1H0,40X,33HDONNEES RANGEES SUR LE FACTEUR 1   //
+     1	     1H ,34X,48HPROFILS DES COLONNES (SOMME D'UNE COLONNE=1000) )
+	RETURN
+	END
+      SUBROUTINE AMPEG(ICARD,V,NCLAS)                                           
+      DIMENSION V(ICARD)                                                        
+      VMAX=V(1)                                                                 
+      VMIN=V(1)                                                                 
+      DO 10 I=1,ICARD                                                           
+      IF (V(I).LT.VMIN) VMIN=V(I)                                               
+      IF (V(I).GT.VMAX) VMAX=V(I)                                               
+10    CONTINUE                                                                  
+      PAS=(VMAX-VMIN)/FLOAT(NCLAS)                                              
+      DO 20 I=1,ICARD                                                           
+      VI=(V(I)-VMIN)/PAS                                                        
+      K=VI+0.999999                                                             
+      IF (K.EQ.0) K=1                                                           
+20    V(I)=K                                                                    
+      RETURN                                                                    
+      END
+	SUBROUTINE ARMIN (NDIM,N,D,IA,IB,T,KT)
+	DIMENSION D(NDIM,N),IA(N),IB(N),T(N),KT(N)
+	DO 10 I=2,N
+	T(I)=D(1,I)
+10	KT(I)=1
+	J=0
+20	DINF=1.0E20
+	DO 30 I=2,N
+	IF (T(I).EQ.0.0) GOTO 30
+	IF (T(I).GE.DINF) GOTO 30
+	INF=I
+	DINF=T(I)
+30	CONTINUE
+	J=J+1
+	IA(J)=KT(INF)
+	IB(J)=INF
+	IF (J.EQ.N-1) GOTO 50
+	T(INF)=0.0
+	DO 40 I=2,N
+	IF (T(I).EQ.0.0) GOTO 40
+	DI=D(I,INF)
+	IF (T(I).LE.DI) GOTO 40
+	KT(I)=INF
+	T(I)=DI
+40	CONTINUE
+	GOTO 20
+50	RETURN
+	END
+C  *************************************************
+C  *                                               *
+C  *   AVAR2: PROGRAMME D'ANALYSE DE LA VARIANCE   *
+C  *                                               *
+C  *************************************************
+      SUBROUTINE AVAR2(LDIM,NQDIM,KDIM,ICARD,NQDEB,NVAR,ITA2,ITA3,LTOT,         
+     1        KCARD,KROIS,W,A,LCUM)                                             
+      COMMON /ENSOR/LEC,IMP                                                     
+      DIMENSION W(LDIM,LDIM),A(LDIM),LCUM(NQDIM),KROIS(3,KDIM),IND(4)           
+      CARDI=ICARD                                                               
+      LCARD=LTOT-1                                                              
+      W(LTOT,LTOT)=CARDI*W(LTOT,LTOT)                                           
+      DO 20 K=1,LCARD                                                           
+      W(LTOT,LTOT)=W(LTOT,LTOT)-CARDI*W(K,LTOT)*A(K)                            
+      W(K,LTOT)=A(K)                                                            
+      W(LTOT,K)=A(K)                                                            
+      DO 10 L=1,LCARD                                                           
+10    W(K,L)=-W(K,L)/CARDI                                                      
+20    CONTINUE                                                                  
+      WRITE(IMP,1000)                                                           
+      IND(1)=NQDEB                                                              
+      IND(2)=NVAR                                                               
+      IND(3)=ITA2                                                               
+      IND(4)=ITA3                                                               
+      NQ=NQDEB+NVAR+ITA2+ITA3                                                   
+      SCE00=W(LTOT,LTOT)                                                        
+      NDL00=ICARD-(LCARD+1)                                                     
+      DL00=NDL00                                                                
+      WRITE(IMP,1100) SCE00,NDL00                                               
+      DO 60 II=1,4                                                              
+      I=5-II                                                                    
+      NQ=NQ-IND(I)                                                              
+      KFIN=IND(I)                                                               
+      IF (I.EQ.2.OR.KFIN.LE.0) GOTO 60                                          
+      DO 50 K=1,KFIN                                                            
+      KK=K                                                                      
+      KX1=LCUM(NQ+KK)+1                                                         
+      IF ((II.EQ.2).AND.(NVAR*ITA2.NE.0)) KK=KFIN                               
+      KX2=LCUM(NQ+KK+1)                                                         
+      KPT=0                                                                     
+      KMOD=-1                                                                   
+      DO 30 KX=KX1,KX2                                                          
+      CALL DEWAW(LDIM,LTOT,W,KX,KMOD)                                           
+      KPT=KPT+1                                                                 
+30    CONTINUE                                                                  
+      SCEK=W(LTOT,LTOT)                                                         
+      SCE1=SCEK-SCE00                                                           
+      NDL1=KPT                                                                  
+      DL1=NDL1                                                                  
+      FK=ABS((SCE1/DL1)/(SCE00/DL00))
+      PK=1.0-RNKSF(4,FK,NDL1,NDL00)                                             
+      IF (II.EQ.1) WRITE(IMP,1200) (KROIS(J,ITA2+K),J=1,3),                     
+     1        SCE1,FK,NDL1,NDL00,PK                                             
+      IF (II.EQ.2) WRITE(IMP,1300) (KROIS(J,K),J=1,2),                          
+     1        SCE1,FK,NDL1,NDL00,PK                                             
+      IF (II.EQ.4) WRITE(IMP,1400) K, SCE1,FK,NDL1,NDL00,PK                     
+      KMOD=1                                                                    
+      DO 40 KX=KX1,KX2                                                          
+      CALL DEWAW (LDIM,LTOT,W,KX,KMOD)                                          
+40    CONTINUE                                                                  
+      IF ((II.EQ.2).AND.(NVAR*ITA2.NE.0)) GOTO 60                               
+50    CONTINUE                                                                  
+60    CONTINUE                                                                  
+      WRITE(IMP,1500)                                                           
+1000  FORMAT(1H0,86(1H-)/1H0,10X,22HANALYSE DE LA VARIANCE /1H0,                
+     1 60HNB. AJUSTEMENT DES M-C SUR LE MODELE RENDU DE PLEIN RANG PAR,         
+     2 25H LES CONTRAINTES = SOMMES/1H ,4X,24HNULLES DES COEFFICIENTS.,         
+     3 55H LES SOMMES DE CARRES CORRESPONDENT A L-ANNULATION SUC-/1H ,          
+     4 4X,56HCESSIVE DE GROUPES DE COEFF SUR CE MODELE DE PLEIN RANG./          
+     5 1H0,86(1H-)/1H0,6HSOURCE,15X,16HSOMME DES CARRES,7X,6HFISHER,4X,         
+     6 13HDEGRES DE LIB,5X,14HPROBA-CRITIQUE /)                                 
+1100  FORMAT(1H0,16HECARTS RESIDUELS,5X,F15.3,22X,I6)                           
+1200  FORMAT(1H0,11HINTERACTION,3I3,2F16.3,2(2X,I4),11X,F7.4)                   
+1300  FORMAT(1H0,11HINTERACTION,2I3,3X,2F16.3,2(2X,I4),11X,F7.4)                
+1400  FORMAT(1H0,3X,7HCRITERE,I4,6X,2F16.3,2(2X,I4),11X,F7.4)                   
+1500  FORMAT(1H0,86(1H-)/)                                                      
+      RETURN                                                                    
+      END                                                                       
+
+	FUNCTION BINOM (N,P)
+	BINOM = 0.0
+	DO 10 I=1,N
+	U = SEN3A (BIDON)
+	IF (U.GT.P) GOTO 10
+	BINOM = BINOM+1
+10	CONTINUE
+	RETURN
+	END
+      SUBROUTINE BOFIX(ICARD,V,B,NB)                                            
+      DIMENSION V(ICARD),B(NB)                                                  
+      NCLAS=NB+1                                                                
+      DO 10 L=1,ICARD                                                           
+      VL=V(L)                                                                   
+      V(L)=NCLAS                                                                
+      DO 10 I=1,NB                                                              
+      J=NB-I+1                                                                  
+      IF (VL.LE.B(J))V(L)=J                                                     
+10    CONTINUE                                                                  
+      RETURN                                                                    
+      END
+	SUBROUTINE BORNS(NDIM,N,X,XMIN,XMAX)
+	DIMENSION X(NDIM)
+	XMIN=X(1)
+	XMAX=X(1)
+	IF (N.EQ.1) RETURN
+	DO 10 I=2,N
+	IF (X(I).LT.XMIN) XMIN=X(I)
+	IF (X(I).GT.XMAX) XMAX=X(I)
+10	CONTINUE
+	RETURN
+	END
+	FUNCTION BOXMU (BIDON)
+	DATA CC/6.283185/
+	DATA Z1/0.0/Z2/0.0/KK/1/
+	IF (KK .EQ. 0) GOTO 10
+	U1 = SEN3A (BIDON)
+	U2 = SEN3A (BIDON)
+	P = SQRT(ABS(-2.0*ALOG(U1)))
+	Q = CC*U2
+	Z1 = P*SIN(Q)
+	Z2 = P*COS(Q)
+	BOXMU = Z1
+	GOTO 20
+10	BOXMU = Z2
+20	KK = 1-KK
+	RETURN
+	END
+      SUBROUTINE CALFC(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,KFAC,
+     1                 F,FI,FJ,S,VP,VPTOT,U,V,DI,DJ)
+      COMMON /ENSOR/LEC,IMP
+      DIMENSION F(NDIM,KDIM),S(KDIM,KDIM),U(NDIM,KFAC),V(KDIM,KFAC)
+      DIMENSION FI(NDIM),FJ(KDIM),DI(NDIM),VP(KDIM),DJ(KDIM)
+	IF (KVVP.GE.K) KVVP=K-1
+	FTOT=0.0
+	DO 10 J=1,KTOT
+10	FJ(J)=0.0
+	DO 20 I=1,NTOT
+20	FI(I)=0.0
+	DO 30 J=1,K
+	DO 30 L=1,J
+30	S(J,L)=0.0
+	DO 70 I=1,N
+	DO 40 J=1,K
+40	FI(I)=FI(I)+F(I,J)
+	FTOT=FTOT+FI(I)
+	IF (FI(I).LT.1.E-06) FI(I)=1.E-06
+	DO 50 J=1,K
+	DO 50 L=1,J
+50	S(J,L)=S(J,L)+F(I,J)*F(I,L)/FI(I)
+	DO 60 J=1,KTOT
+60	FJ(J)=FJ(J)+F(I,J)
+70	CONTINUE
+	IF (NTOT.EQ.N) GOTO 100
+	N1=N+1
+	DO 90 I=N1,NTOT
+	DO 80 J=1,K
+80	FI(I)=FI(I)+F(I,J)
+90	IF (FI(I).LT.1.E-06) FI(I)=1.E-06
+100	CONTINUE
+	DO 110 J=1,K
+	DO 110 L=1,J
+	SD=FJ(J)*FJ(L)
+	IF (SD.LT.1.E-12) SD=1.E-12
+	S(J,L)=S(J,L)/SQRT(SD)
+110	S(L,J)=S(J,L)
+	VPTOT=0.0
+	DO 120 L=1,K
+120	VPTOT=VPTOT+S(L,L)
+	VPTOT=VPTOT-1.
+      CALL VVPRO(KDIM,K,S,VP)
+	DO 130 J=1,KTOT
+	DJ(J)=0.0
+	IF (FJ(J).LT.1.E-06) FJ(J)=1.E-06
+130	FJ(J)=FJ(J)/FTOT
+	DO 170 I=1,NTOT
+	DO 140 L=1,KVVP
+	U(I,L)=0.0
+	L1=L+1
+	DO 140 J=1,K
+140	U(I,L)=U(I,L)+(F(I,J)*S(J,L1))/(FI(I)*SQRT(FJ(J)))
+	DI(I)=0.0
+	DO 150 J=1,K
+150	DI(I)=DI(I)+(F(I,J)/FI(I)-FJ(J))**2/FJ(J)
+	FI(I)=FI(I)/FTOT
+	IF (I.GT.N) GOTO 170
+	DO 160 J=1,KTOT
+160 	DJ(J)=DJ(J)+(F(I,J)/(FTOT*FJ(J))-FI(I))**2/FI(I)
+170	CONTINUE
+	DO 180 J=1,K
+	DO 180 L=1,KVVP
+	L1=L+1
+180	V(J,L)=(S(J,L1)/SQRT(FJ(J)))*SQRT(VP(L1))
+	IF (KTOT.EQ.K) RETURN
+	K1=K+1
+	DO 190 J=K1,KTOT
+	DO 190 L=1,KVVP
+190	V(J,L)=0.0
+	DO 210 I=1,N
+	DO 200 J=K1,KTOT
+	DO 200 L=1,KVVP
+	L1=L+1
+200	V(J,L)=V(J,L)+(F(I,J)*U(I,L))/(FTOT*FJ(J)*SQRT(VP(L1)))
+210	CONTINUE
+      RETURN
+      END
+      SUBROUTINE CALFP(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,KFAC,
+     1                 F,FI,FJ,S,VP,U,V,DI,IDJ)
+      COMMON /ENSOR/LEC,IMP
+      DIMENSION F(NDIM,KDIM),S(KDIM,KDIM),U(NDIM,KFAC),V(KDIM,KFAC)
+      DIMENSION FI(NDIM),FJ(KDIM),DI(NDIM),VP(KDIM),IDJ(KDIM)
+      DO 10 I=1,NTOT
+      DI(I)=1.0
+10    IF (I.GT.N) DI(I)=0.0
+      CALL CORRL(NDIM,KDIM,N,KTOT,F,DI,S,FI,FJ,M)
+      WRITE(IMP,100)
+      MODK=2
+      CALL KLICO(MODK,KDIM,KDIM,KTOT,KTOT,S,IDJ,IDJ)
+      CALL VVPRO(KDIM,K,S,VP)
+      IF (KVVP.GT.K) KVVP=K
+      KV=0
+      DO 30 L=1,KVVP
+      VP(L)=ABS(VP(L))
+      IF (VP(L).LT.0.000001) GOTO 30
+      KV=KV+1
+      DO 20 J=1,K
+20    V(J,L)=S(J,L)*SQRT(VP(L))
+30    CONTINUE
+      KVVP=KV
+      ACTK2=SQRT(FLOAT(K))
+      SOM=0.0
+      DO 50 I=1,NTOT
+      SOM=SOM+DI(I)
+      DO 50 L=1,KVVP
+      U(I,L)=0.0
+      DO 40 J=1,K
+	IF (FJ(J) .EQ. 0.) TYPE *,'ERREUR MOYENNE ',J,' NULLE.'
+40    U(I,L)=U(I,L)+S(J,L)*(F(I,J)-FI(J))/FJ(J)
+50    U(I,L)=U(I,L)/ACTK2
+      IF (KTOT.LE.K) RETURN
+      K1=K+1
+      CJ=ACTK2/SOM
+      DO 70 J=K1,KTOT
+      DO 70 L=1,KVVP
+      V(J,L)=0.0
+      DO 60 I=1,N
+      CC=DI(I)*CJ/SQRT(VP(L))
+60    V(J,L)=V(J,L)+CC*U(I,L)*(F(I,J)-FI(J))/FJ(J)
+70    CONTINUE
+      RETURN
+100   FORMAT(1H1/1H0,10X,'MATRICE DES CORRELATIONS (INDIVIDUS ACTIFS)')
+      END
+      SUBROUTINE CLAS4(MODE,ICARD,MCARD,IFIN,D,PI,IDI,LA,LB,LP,VAL,NO,
+     1                 IDIM,MDIM,IDDIM)          
+      EXTERNAL MONO
+      DIMENSION D(IDDIM),IDI(IDIM),PI(MDIM)                                    
+      DIMENSION LA(IDIM),LB(IDIM),LP(MDIM),VAL(MDIM),NO(MDIM)
+      COMMON /ENSOR/LEC,IMP                                                     
+      WRITE(IMP,600) ICARD                                                      
+      GOTO (10,20,30,40) ,MODE                                                  
+10    WRITE(IMP,610)                                                            
+      GOTO 50                                                                   
+20    WRITE(IMP,620)                                                            
+      GOTO 50                                                                   
+30    WRITE(IMP,630)                                                            
+      GOTO 50                                                                   
+40    WRITE(IMP,640)                                                            
+50    IF (MODE.EQ.4) GOTO 70                                                    
+      DO 60 I1I2=1,MCARD                                                        
+60    D(I1I2)=SQRT(D(I1I2))                                                     
+70    IF (MODE.NE.3) GOTO 90                                                    
+      DO 80 I1=2,ICARD                                                          
+      I3=I1-1                                                                   
+      DO 80 I2=1,I3                                                             
+      I1I2=MONO(I1,I2)                                                          
+80    D(I1I2)=D(I1I2)*PI(I1)*PI(I2)/(PI(I1)+PI(I2))                             
+90    CONTINUE                                                                  
+      WRITE(IMP ,650)                                                           
+      DO 100 I=1,ICARD                                                          
+      NO(I)=I                                                                   
+      VAL(I)=0.0                                                                
+100   LP(I)=1                                                                   
+      IDEB=ICARD+1                                                              
+      DO 190 I=IDEB,IFIN                                                        
+      DINF=D(1)                                                                 
+      II1=1                                                                     
+      II2=2                                                                     
+      II=2*ICARD-I+1                                                            
+      DO 110 I1=2,II                                                            
+      I3=I1-1                                                                   
+      DO 110 I2=1,I3                                                            
+      I1I2=MONO(I1,I2)                                                          
+      IF (D(I1I2).GE.DINF) GOTO 110                                             
+      DINF=D(I1I2)                                                              
+      II1=I1                                                                    
+      II2=I2                                                                    
+110   CONTINUE                                                                  
+      IR=I-IDEB+1                                                               
+      LA(IR)=MIN0(NO(II1),NO(II2))                                              
+      LB(IR)=MAX0(NO(II1),NO(II2))                                              
+      VAL(I)=DINF                                                               
+      LAI=LA(IR)                                                                
+      LBI=LB(IR)                                                                
+      LPA=LP(LAI)                                                               
+      LPB=LP(LBI)                                                               
+      LP(I)=LPA+LPB                                                             
+      VA=VAL(LAI)                                                               
+      VB=VAL(LBI)                                                               
+      PIA=PI(LAI)                                                               
+      PIB=PI(LBI)                                                               
+      PI(I)=PIA+PIB                                                             
+      NO(II1)=I                                                                 
+      DO 160 III=1,II                                                           
+      IF (III.EQ.II1.OR.III.EQ.II2) GOTO 160                                    
+      M1=MONO(III,II1)                                                          
+      M2=MONO(III,II2)                                                          
+      GOTO (120,130,140,150),MODE                                               
+120   D(M1)=AMIN1(D(M1),D(M2))                                                  
+      GOTO 160                                                                  
+130   D(M1)=(LPA*D(M1)+LPB*D(M2))/(LPA+LPB)                                     
+      GOTO 160                                                                  
+140   IS=NO(III)                                                                
+      VIS=PI(IS)                                                                
+      D(M1)=((VA+VIS)*D(M1)+(VB+VIS)*D(M2)-VIS*DINF)/(VA+VB+VIS)                
+      GOTO 160                                                                  
+150   D(M1)=((LPA*D(M1)+LPB*D(M2))/(LPA+LPB))                                   
+     1    -(LPA*LPB*DINF/((LPA+LPB)**2))                                        
+160   CONTINUE                                                                  
+      IF (II2.EQ.II) GOTO 180                                                   
+      NO(II2)=NO(II)                                                            
+      IT=II-1                                                                   
+      DO 170 III=1,IT                                                           
+      IF (III.EQ.II2) GOTO 170                                                  
+      M1=MONO(III,II2)                                                          
+      M2=MONO(III,II)                                                           
+      D(M1)=D(M2)                                                               
+170   CONTINUE                                                                  
+180   WRITE(IMP,660) I,VAL(I),LA(IR),LB(IR),LP(I)                               
+190   CONTINUE                                                                  
+      IF (MODE.EQ.1) GOTO 210                                                   
+      DO 200 I=IDEB,IFIN                                                        
+200   VAL(I)=I-IDEB+1                                                           
+210   RETURN                                                                    
+600   FORMAT(1H1,20X,41HCLASSIFICATION ASCENDANTE HIERARCHIQUE DE,I5,           
+     1   11H  INDIVIDUS /1H ,20X,24HSUR MATRICE DE DISTANCES //)                
+610   FORMAT(1H ,20X,46HULTRAMETRIQUE INFERIEURE MINIMALE  (ALGORITHME,         
+     1 17H DU SAUT MINIMAL) //)                                                 
+620   FORMAT(1H ,20X,30HCRITERE DE LA DISTANCE MOYENNE //)                      
+630   FORMAT(1H ,20X,22HCRITERE DE LA VARIANCE //)                              
+640   FORMAT(1H ,20X,21HCRITERE DU BARYCENTRE //)                               
+650   FORMAT(//1H ,30X,40HNOEUD   INDICE   AINE  BENJAMIN EFFECTIF /)           
+660   FORMAT(1H ,30X,I4,3X,F6.3,I7,I8,I8)                                       
+      END                                                                       
+
+C ******************************************
+C   CLASH
+C   CLASSIFICATION ASCENDANTE HIERARCHIQUE
+C ******************************************
+      PARAMETER (IDIM=500,JDIM=50,MDIM=999,IDDIM=124750)
+      DIMENSION T(IDIM,JDIM),IDI(IDIM),PI(MDIM),PJ(JDIM),D(IDDIM)
+     1            ,IDJ(JDIM)
+      DIMENSION NUM(IDIM),V(IDIM),IW(IDIM),NC(IDIM),W(IDIM)
+     1           ,ID(IDIM)                  
+      DIMENSION LA(IDIM),LB(IDIM),LP(MDIM),VAL(MDIM),NO(MDIM)
+      COMMON /ENSOR/LEC,IMP                      
+      DATA IBLC/4H    /                               
+      LEC=5                                                                    
+      IMP=6                                                                     
+      READ(LEC,100) KODE
+100   FORMAT(I1)
+      CALL DONNK(MODE,IDIM,JDIM,ICARD,JCARD,T,IDI)
+      DO 10 J=1,JCARD
+10    IDJ(J)=IBLC
+      MKLI=2    
+      IF (KODE.EQ.1) CALL KLICO(MKLI,IDIM,JDIM,ICARD,JCARD,T,IDI,IDJ)
+      MCARD=ICARD*(ICARD-1)/2                                        
+      CALL DISTK(IDIM,JDIM,MDIM,IDDIM,ICARD,JCARD,MCARD,T,PI,PJ,D)  
+      CALL DTRIG (ICARD,MCARD,D,IDI,PI)
+      IFIN=2*ICARD-1                                                
+      CALL CLAS4(MODE,ICARD,MCARD,IFIN,D,PI,IDI,LA,LB,LP,VAL,NO,
+     1           IDIM,MDIM,IDDIM)                
+      CALL EDCHA(ICARD,IFIN,IDI,LA,LB,LP,VAL,NUM,V,NO,NC,IW,W,ID,
+     1           IDIM,MDIM,IDDIM)               
+      STOP                                                                      
+      END                                                                       
+C  ************************************************************
+C  *                                                          * 
+C  *  COMAJ:  CALCUL DE LA MATRICE DES VARIANCES-COVARIANCES  *
+C  *                                                          *
+C  ************************************************************ 	
+      SUBROUTINE COMAJ(MODE,NDIM,KDIM,NVAR,W,XMOY,XI,PI,SOMP,KOMPT)
+      DIMENSION W(KDIM,KDIM),XMOY(NDIM),XI(KDIM)                                
+      DATA ZERO/0.0/UN/1.0/                                                     
+      IF (MODE.LT.0) GOTO 170                                                   
+      IF (MODE-1) 10,60,120                                                     
+10    SOMP=PI                                                                   
+20    CONTINUE                                                                  
+      DO 50 J=1,NVAR                                                            
+      IF (PI.LT.ZERO) GOTO 30                                                   
+      XMOY(J)=XI(J)                                                             
+      GOTO 40                                                                   
+30    XMOY(J)=XMOY(J)+PNORM*(XI(J)-XMOY(J))                                     
+40    XI(J)=ZERO                                                                
+      DO 50 L=1,J                                                               
+      W(J,L)=ZERO                                                               
+50    W(L,J)=ZERO                                                               
+      KOMPT=1                                                                   
+      MODE=1                                                                    
+      GOTO 170                                                                  
+60    CONTINUE                                                                  
+      IF (PI) 70,170,80                                                         
+70    KOMPT=KOMPT-1                                                             
+      GOTO 90                                                                   
+80    KOMPT=KOMPT+1                                                            
+90    SOMP=SOMP+PI                                                              
+      IF (SOMP.LE.0.0) GOTO 160                                                 
+      PNORM=PI/SOMP                                                             
+      IF (KOMPT-1) 160,20,100                                                   
+100   COEF=PI-PNORM*PI                                                          
+      DO 110J=1,NVAR                                                            
+      XI(J)=XI(J)-XMOY(J)                                                       
+      XMOY(J)=XMOY(J)+PNORM*XI(J)                                               
+      DO 110 L=1,J                                                              
+      W(J,L)=W(J,L)+COEF*XI(J)*XI(L)                                            
+110   W(L,J)=W(J,L)                                                             
+      GOTO 170                                                                  
+120   CONTINUE                                                                  
+      DO 130 J=2,NVAR                                                           
+      SJ=W(J,J)                                                                 
+      IF (SJ.LE.ZERO) GOTO 160                                                  
+      J1=J-1                                                                    
+      DO 130 L=1,J1                                                             
+      SL=W(L,L)                                                                 
+      IF (SL.LE.ZERO) GOTO 160                                                  
+      W(J,L)=W(J,L)/SQRT(SJ*SL)                                                 
+130   W(L,J)=W(J,L)                                                             
+      DO 150 J=1,NVAR                                                           
+      XI(J)=SQRT(W(J,J)/SOMP)                                                   
+150   W(J,J)=UN                                                                 
+      MODE=-3                                                                   
+      GOTO 170                                                                  
+160   MODE=-MODE                                                                
+170   RETURN                                                                    
+      END
+	FUNCTION COMBI (N,K)
+	NK = N-K
+	IF (K) 20,30,10
+10	IF (NK) 20,30,40
+20	COMBI = 0.0
+	RETURN
+30	COMBI = 1.0
+	RETURN
+40	IF (K-NK) 50,60,60
+50	NK = K
+60	COMBI = 1.0
+	DO 70 J=1,NK
+70	COMBI = (COMBI*FLOAT(N+1-J))/FLOAT(J)
+	RETURN
+	END
+	SUBROUTINE COORC(NDIM,KDIM,KFAC,NTOT,N,KTOT,K,KVVP,VP,
+     1  		 U,V,FI,FJ,DI,DJ,IDI,IDJ)
+	COMMON /ENSOR/LEC,IMP
+	DIMENSION U(NDIM,KFAC),V(KDIM,KFAC),FI(NDIM),FJ(KDIM)
+	DIMENSION IDI(NDIM),IDJ(KDIM),VP(KDIM),DI(NDIM),DJ(KDIM)
+	DIMENSION G(18),LT(6)
+	DATA LT/2HF1,2HF2,2HF3,2HF4,2HF5,2HF6/
+	WRITE(IMP,100)
+	WRITE(IMP,110) (LT(L),L=1,6),(LT(L),L=1,6),(LT(L),L=1,6)
+	WRITE(IMP,120)
+	LFIN=6
+	IF (LFIN.GT.KVVP) LFIN=KVVP
+	DO 30 J=1,KTOT
+	DO 10 L=1,18
+10	G(L)=0.0
+	BB=0.0
+	IF (J.LE.K) BB=1.0
+	DO 20 L=1,LFIN
+	G(L)=V(J,L)
+	AA=FJ(J)*G(L)*G(L)
+	G(6+L)=100.0*AA*BB/VP(L+1)
+	G(12+L)=AA/(DJ(J)*FJ(J))
+20	CONTINUE
+	FJ(J)=BB*FJ(J)
+	IF (J.EQ.(K+1)) WRITE(IMP,130)
+	WRITE(IMP,150) IDJ(J),FJ(J),DJ(J),(G(L),L=1,18)
+30	CONTINUE
+	WRITE(IMP,140)
+	DO 60 I=1,NTOT
+	DO 40 L=1,18
+40	G(L)=0.0
+	BB=0.0
+	IF (I.LE.N) BB=1.0
+	DO 50 L=1,LFIN
+	G(L)=U(I,L)
+	AA=FI(I)*G(L)*G(L)
+	G(6+L)=100.0*AA*BB/VP(L+1)
+	G(12+L)=AA/(DI(I)*FI(I))
+50	CONTINUE
+	FI(I)=BB*FI(I)
+	IF (I.EQ.(N+1)) WRITE(IMP,130)
+	WRITE(IMP,150) IDI(I),FI(I),DI(I),(G(L),L=1,18)
+60	CONTINUE
+	RETURN
+100	FORMAT(1H1/1H0,10X,'COORDONNEES DES COORDONNEES ET DES '
+     1       ,'CONTRIBUTIONS' /1H ,132(1H-)///1H ,4HNOMS,2X,6HMASSES,
+     2  1X,6HDIST/O,1H*,12X,11HCOORDONNEES ,13X,2H *,4X,'CONTRIBUTIONS',
+     3  ' ABSOLUES     *   CONTRIBUTIONS RELATIVES     *')
+110	FORMAT(1H ,122(1H*)/1H ,18X,' *',6(3X,A2,1X),' *',6(2X,A2,1X),
+     1  ' *',6(2X,A2,1X),' *'/1H ,122(1H*))
+120	FORMAT(/1H ,10X,21HPOINTS-COLONNE ACTIFS   /)
+130	FORMAT(/1H ,10X,22HPOINTS SUPPLEMENTAIRES   /)
+140	FORMAT(/1H ,10X,19HPOINTS-LIGNE ACTIFS   /)
+150  	FORMAT(1X,A4,F7.3,1X,F6.2,' *',6F6.2,' *',6F5.1,' *',
+     1         6F5.2,' *')
+	END
+	SUBROUTINE COORP(NDIM,KDIM,KFAC,NTOT,N,KTOT,K,KVVP,
+     1  		 U,V,FI,FJ,IDI,IDJ)
+	COMMON /ENSOR/LEC,IMP
+	DIMENSION U(NDIM,KFAC),V(KDIM,KFAC),FI(NDIM),FJ(KDIM)
+	DIMENSION IDI(NDIM),IDJ(KDIM)
+	KV=KVVP
+	IF (KV.GT.6) KV=6
+	WRITE(IMP,100)
+	DO 10 J=1,KTOT
+	IF (J.EQ.(K+1)) WRITE(IMP,110)
+10	WRITE(IMP,120) IDJ(J),FI(J),FJ(J),(V(J,L),L=1,KV)
+	WRITE(IMP,130)
+	DO 20 I=1,NTOT
+	IF (I.EQ.(N+1)) WRITE(IMP,110)
+20	WRITE(IMP,140) IDI(I),(U(I,L),L=1,KV)
+	RETURN
+100	FORMAT(1H1/1H0,10X,33HCOORDONNEES DES VARIABLES ACTIVES /
+     1         1H ,52(2H .)/1H ,29H NOM       MOYENNE    EC.TYPE,8X,
+     2	       5HAXE 1,7X,5HAXE 2,7X,5HAXE 3,7X,5HAXE 4,7X,5HAXE 5,7X,
+     3         5HAXE 6/1H ,52(2H .)//)
+110	FORMAT(1H /1H ,10X,24HELEMENTS SUPPLEMENTAIRES /)
+120 	FORMAT(1H ,1X,A4,2F12.3,2X,6F12.4)
+130	FORMAT(1H //1H ,52(2H .)/1H ,10X,25HCOORDONNEES DES INDIVIDUS,
+     1 	       7H ACTIFS /1H ,52(2H .)//)
+140  	FORMAT(1H ,1X,A4,26X,6F12.4)
+	END
+      SUBROUTINE CORRL(NDIM,KDIM,N,K,X,P,COR,XMOY,SX,KOMPT)
+      DIMENSION X(NDIM,KDIM),P(NDIM),COR(KDIM,KDIM)
+      DIMENSION SX(KDIM),XMOY(KDIM)
+      MODE=0
+      DO 20 I=1,N
+      PI=P(I)
+      DO 10 J=1,K
+10    SX(J)=X(I,J)
+      CALL COMAJ(MODE,NDIM,KDIM,K,COR,XMOY,SX,PI,SOMP,KOMPT)
+20    CONTINUE
+      MODE=2
+      CALL COMAJ(MODE,NDIM,KDIM,K,COR,XMOY,SX,PI,SOMP,KOMPT)
+      RETURN
+      END
+	FUNCTION CRUSK (BIDON)
+	DATA K/1/
+	DO 10 I=1,3
+10	K = MOD (5*K,8192)
+	CRUSK = FLOAT(K) / 8192.0
+	RETURN
+	END
+C  *******************************
+C  *                             *
+C  *  DEWAW : UTILISE PAR AVAR2  *
+C  *                             *
+C  *******************************  
+      SUBROUTINE DEWAW(NDIM,NTOT,W,KX,KMOD)                                     
+      DIMENSION W(NDIM,NDIM)                                                    
+      DO 10 J=1,NTOT                                                            
+      DO 10 L=J,NTOT                                                            
+      IF (J.EQ.KX.OR.L.EQ.KX) GOTO 10                                           
+      W(J,L)=W(J,L)-W(J,KX)*W(KX,L)/W(KX,KX)                                    
+      W(L,J)=W(J,L)                                                             
+10    CONTINUE                                                                  
+      DO 20 J=1,NTOT                                                            
+      IF (J.EQ.KX) GOTO 20                                                      
+      W(J,KX)=KMOD*W(J,KX)/W(KX,KX)                                             
+      W(KX,J)=W(J,KX)                                                           
+20    CONTINUE                                                                  
+      W(KX,KX)=-1./W(KX,KX)                                                     
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE DISTK(IDIM,JDIM,MDIM,IDDIM,ICARD,JCARD,MCARD,T,PI,PJ,D)                        
+      EXTERNAL MONO                                                             
+      DIMENSION T(IDIM,JDIM),PI(MDIM),PJ(JDIM),D(IDDIM)
+      DATA ZERO/1.0E-20/                                                        
+      DO 10 I=1,ICARD                                                           
+      PI(I)=0.0                                                                 
+      DO 10 J=1,JCARD                                                           
+10    PI(I)=PI(I)+T(I,J)                                                        
+      PT=0.0                                                                    
+      DO 20 I=1,ICARD                                                           
+20    PT=PT+PI(I)                                                               
+      DO 30 J=1,JCARD                                                           
+      PJ(J)=0.0                                                                 
+      DO 30 I=1,ICARD                                                           
+30    PJ(J)=PJ(J)+T(I,J)                                                        
+      DO 40 J=1,JCARD                                                           
+40    PJ(J)=PJ(J)/PT                                                            
+      DO 70 I1=2,ICARD                                                          
+      I3=I1-1                                                                   
+      DO 70 I2=1,I3                                                             
+      I1I2=MONO(I1,I2)                                                          
+      D(I1I2)=0.0                                                               
+      DO 60 J=1,JCARD                                                           
+      IF (PJ(J).LE.0.0) GOTO 60                                                 
+      AJ=T(I1,J)/PI(I1)-T(I2,J)/PI(I2)                                          
+      AJ=AJ*AJ                                                                  
+      IF (AJ.GT.ZERO) GOTO 50                                                   
+      AJ=0.0                                                                    
+      GOTO 60                                                                   
+50    AJ=AJ/PJ(J)                                                               
+      D(I1I2)=D(I1I2)+AJ                                                        
+60    CONTINUE                                                                  
+70    CONTINUE                                                                  
+      DO 80 I=1,ICARD                                                           
+80    PI(I)=PI(I)/PT                                                            
+      RETURN                                                                    
+      END                                                                       
+
+C  **********************************************
+C  *                                            *
+C  *   DONNI : LECTURE D'UNE LIGNE DE DONNEES   *
+C  *                                            *
+C  **********************************************
+      SUBROUTINE DONNI(NQDIM,NQTOT,D,FMT)                                           
+      DIMENSION D(NQDIM),FMT(20)
+      IUNIT=8                                                                   
+      READ(IUNIT,FMT) (D(L),L=1,NQTOT)
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE DONNK(MODE,IDIM,JDIM,ICARD,JCARD,T,IDI)                             
+      DIMENSION T(IDIM,JDIM),IDI(IDIM),FMT(20)                                     
+      COMMON /ENSOR/LEC,IMP                                                     
+      IUNIT=8                                                                   
+      READ(LEC,500) MODE                                                        
+      READ(LEC,500) ICARD,JCARD                                                       
+      READ(LEC,510) (FMT(LL),LL=1,20)           
+      I=1
+1     READ(IUNIT,FMT,END=99) IDI(I),(T(I,J),J=1,JCARD)                         
+      DO 10 J=1,JCARD
+      IF (T(I,J).NE.0.0) GOTO 11 
+10    CONTINUE
+      GOTO 1
+11    I=I+1
+      GOTO 1
+99    CONTINUE
+      ICARD=I-1
+      RETURN                                                                    
+500   FORMAT(2I4)                                                                
+510   FORMAT(20A4)                                                              
+      END                                                                       
+
+C   **************************************
+C   *                                    *
+C   *   DPLOI: DEPLOIEMENT DES DONNEES   *
+C   *                                    *
+C   **************************************
+      SUBROUTINE DPLOI(NQDIM,LDIM,KDIM,NQDEB,NVAR,KCARD,LCARD,LTOT,             
+     1        KROIS,LCUM,D,X)                                                   
+      DIMENSION KROIS(3,KDIM),LCUM(NQDIM),D(NQDIM),X(LDIM)                      
+      NJ=LCUM(NQDEB+1)                                                          
+      LCARD=LCUM(NQDEB+NVAR+KCARD+1)                                            
+      IF (NQDEB.LE.0) GOTO 50                                                   
+      DO 10 J=1,LCARD                                                           
+10    X(J)=0.0                                                                  
+      DO 40 J=1,NQDEB                                                           
+      KAT=D(J)+0.001                                                            
+      LIBJ=LCUM(J+1)-LCUM(J)                                                    
+      JJ=LCUM(J)                                                                
+      IF (KAT.NE.(LIBJ+1)) GOTO 30                                              
+      DO 20 L=1,LIBJ                                                            
+      JL=JJ+L                                                                   
+20    X(JL)=-1.0                                                                
+      GOTO 40                                                                   
+30    JX=JJ+KAT                                                                 
+      X(JX)=1.0                                                                 
+40    CONTINUE                                                                  
+50    CONTINUE                                                                  
+      IF (NVAR.LE.0) GOTO 70                                                    
+      DO 60 JJ=1,NVAR                                                           
+      J=NJ+JJ                                                                   
+      JQ=NQDEB+JJ                                                               
+60    X(J)=D(JQ)                                                                
+      NJ=NJ+NVAR                                                                
+70    CONTINUE                                                                  
+      IF (KCARD.LE.0) GOTO 140                                                  
+      DO 130 K=1,KCARD                                                          
+      K1=KROIS(1,K)                                                             
+      JD1=LCUM(K1)+1                                                            
+      JF1=LCUM(K1+1)                                                            
+      K2=KROIS(2,K)                                                             
+      JD2=LCUM(K2)+1                                                            
+      JF2=LCUM(K2+1)                                                            
+      K3=KROIS(3,K)                                                             
+      JD3=LDIM                                                                  
+      JF3=LDIM                                                                  
+      X(LDIM)=1.0                                                               
+      IF (K3.LE.0) GOTO 80                                                      
+      JD3=LCUM(K3)+1                                                            
+      JF3=LCUM(K3+1)                                                            
+80    CONTINUE                                                                  
+      DO 120 J1=JD1,JF1                                                         
+      DO 110 J2=JD2,JF2                                                         
+      DO 110 J3=JD3,JF3                                                         
+      NJ=NJ+1                                                                   
+      X(NJ)=X(J1)*X(J2)*X(J3)                                                   
+110   CONTINUE                                                                  
+120   CONTINUE                                                                  
+130   CONTINUE                                                                  
+140   CONTINUE                                                                  
+      LCARD=NJ                                                                  
+      LTOT=LCARD+1                                                              
+      X(LTOT)=D(NQDEB+NVAR+1)                                                   
+      RETURN                                                                    
+      END                                                     
+
+      SUBROUTINE DTRIG(ICARD,MCARD,D,IDI,PI)                                    
+      DIMENSION D(MCARD),IDI(ICARD),PI(ICARD)                                   
+      COMMON /ENSOR/LEC,IMP                                                     
+      DATA KOL/20/                                                              
+      LMAX=(ICARD-1)/KOL+1                                                      
+      WRITE(IMP,600)                                                            
+      DO 20 L=1,LMAX                                                            
+      IDEB=(L-1)*KOL+1                                                          
+      IFIN=IDEB+KOL-1                                                           
+      IF (L.EQ.LMAX) IFIN=ICARD                                                 
+      WRITE(IMP,610) (IDI(II),II=IDEB,IFIN)                                     
+      DO 10 I=1,ICARD                                                           
+      II=(I-1)*(I-2)/2                                                          
+      I1=I-1                                                                    
+      IMIN=MIN0(IFIN,I1)                                                        
+      IF (IMIN.LT.IDEB) GOTO 10                                                 
+      KDEB=II+IDEB                                                              
+      KFIN=II+IMIN                                                              
+      WRITE(IMP,620) PI(I),IDI(I),(D(K),K=KDEB,KFIN)                            
+10    CONTINUE                                                                  
+      WRITE(IMP,610) (IDI(II),II=IDEB,IFIN)                                     
+20    CONTINUE                                                                  
+600   FORMAT(1H1,15X,                                                           
+     1   34HTABLEAU TRIANGULAIRE DES DISTANCES / 1H ,64(2H- )/)                 
+610   FORMAT(1H0,5HPOIDS,6X,20(1X,A4,1X)/)                                      
+620   FORMAT(1H ,F5.3,1X,A4,20(F6.2))                                           
+      RETURN                                                                    
+      END
+      SUBROUTINE EDCHA (ICARD,IFIN,IDI,LA,LB,LP,VAL,NUM,V,NO,NC,IW,W,ID,
+     1                  IDIM,MDIM,IDDIM)        
+      COMMON /ENSOR/LEC,IMP                                                     
+      DIMENSION IDI(IDIM),LA(IDIM),LB(IDIM),LP(MDIM),VAL(MDIM),              
+     1 V(IDIM),NO(MDIM),NC(IDIM),IW(IDIM),W(IDIM),                          
+     2      ID(IDIM),NUM(IDIM)
+      DIMENSION LIGN(110)                                                       
+      DATA LIG/110/IBLAN/1H /ISTAR/1H./                                       
+      DO 1 I=1,IDIM
+1     NC(I)=0
+      IDEB=ICARD+1                                                              
+      DO 10 I=IDEB,IFIN                                                         
+      IR=I-IDEB+1                                                               
+      IA=LA(IR)                                                                 
+      IB=LB(IR)                                                                 
+      NO(IA)=I                                                                  
+10    NO(IB)=I                                                                  
+      NO(IFIN)=IFIN                                                             
+      WRITE(IMP,600)                                                            
+      DO 50 I=IDEB,IFIN                                                         
+      NC(1)=I                                                                   
+      KPT=0                                                                     
+      JI=1                                                                      
+20    IF (NC(JI).GT.ICARD) GOTO 30                                              
+      K=NC(JI)                                                                  
+      KPT=KPT+1                                                                 
+      ID(KPT)=IDI(K)                                                            
+      IW(KPT)=K                                                                 
+      NUM(ICARD-KPT+1)=IDI(K)                                                   
+      JI=JI-1                                                                   
+      GOTO 40                                                                   
+30    IJ=JI+1                                                                   
+      NI=NC(JI)-IDEB+1                                                          
+      NC(IJ)=LA(NI)                                                             
+      NC(JI)=LB(NI)                                                             
+      JI=JI+1                                                                   
+40    IF (JI.NE.0) GOTO 20                                                      
+      IR=I-IDEB+1
+      WRITE(IMP,610) I,VAL(I),LA(IR),LB(IR),LP(I),(ID(KK),KK=1,KPT)             
+      I1=IW(1)                                                                  
+      I2=IW(KPT)                                                                
+      W(I1)=NO(I)+0.0001                                                        
+      W(I2)=NO(I2)+0.0001                                                       
+50    CONTINUE                                                                  
+      DO 60 I=1,ICARD                                                           
+      K=W(I)                                                                    
+60    W(I)=VAL(K)                                                               
+      DO 70 I=1,ICARD                                                           
+      IWI=IW(I)                                                                 
+70    V(ICARD-I+1)=W(IWI)                                                       
+      VMIN=VAL(IDEB)                                                            
+      VMAX=VAL(IFIN)                                                            
+      WRITE(IMP,620) VMIN,VMAX                                                  
+      DO 80 L=1,LIG                                                             
+80    LIGN(L)=IBLAN                                                             
+      PAS=FLOAT(LIG)/(VMAX-VMIN)                                                
+      I1=ICARD-1                                                                
+      DO 120 I=1,I1                                                             
+      LX=(V(I)-VMIN)*PAS+1.0                                                    
+      IF (LX.LE.1) LX=1                                                         
+      IF (LX.GT.LIG) LX=LIG                                                     
+      DO 90 LL=1,LX                                                             
+90    LIGN(LL)=ISTAR                                                            
+      WRITE(IMP,630) V(I),NUM(I),(LIGN(L),L=1,LIG)                              
+      IF (LX.EQ.1) GOTO 110                                                     
+      LX=LX-1                                                                   
+      DO 100 LL=1,LX                                                            
+100   LIGN(LL)=IBLAN                                                            
+110   WRITE(IMP,640) (LIGN(L),L=1,LIG)                                          
+120   CONTINUE                                                                  
+      DO 130 L=1,LIG                                                            
+130   LIGN(L)=ISTAR                                                             
+      WRITE(IMP,650) NUM(ICARD),(LIGN(L),L=1,LIG)                               
+600   FORMAT(1H1,32HNOEUD  INDICE  AINE  BENJ  POIDS  ,5X,                      
+     1  40HDESCRIPTION DES CLASSES DE LA HIERARCHIE /1H ,64(2H. )/)             
+610   FORMAT(1H0,I4,F9.3,I5,I6,I7,5X,18(1X,A4),/(1H ,36X,18(1X,A4)))
+620   FORMAT(1H1,38X,32HTRACE DU DENDROGRAMME  ECHELLE =,2F8.3//)               
+630   FORMAT(1H ,F10.4,3X,A4,2X,2H..,110A1)                                     
+640   FORMAT(1H ,21X,110A1)                                                     
+650   FORMAT(1H ,10(1H-),3X,A4,2X,2H..,110A1)                                   
+      RETURN                                                                    
+      END                                                                       
+
+C  ************************************************************
+C  *                                                          *
+C  *   EDITR: EDITION DES RESULTATS DE L'AJUSTEMENT DES M-C   *
+C  *                                                          *
+C  ************************************************************	                   
+      SUBROUTINE EDITR (LDIM,LTOT,ICARD,W,XMOY,A,SA,SCE,S2,R2,
+     *                            LCUM,NQDIM,NQDEB)
+      COMMON /ENSOR/LEC,IMP                                                     
+      DIMENSION LCUM(NQDIM)                                                     
+      DIMENSION W(LDIM,LDIM),XMOY(LDIM),A(LDIM),SA(LDIM)                        
+      NQFIN=LCUM(NQDEB+1)                                                       
+      WRITE(IMP,1000) ICARD,LTOT                                                
+      NDL=ICARD-LTOT                                                            
+      LCARD=LTOT-1                                                              
+      WRITE(IMP,1100) NDL                                                       
+      N=2                                                                       
+      DO 10 L=1,LCARD                                                           
+	IF (SA(L) .EQ. 0.0) SA(L)=0.00001
+      TL=ABS(A(L)/SA(L))                                                        
+      PL=2.*(1.-RNKSF(3,TL,NDL,NDL))                                            
+      WRITE(IMP,1200) L,A(L),SA(L),TL,PL                                        
+      IF (L.GT.NQFIN) GOTO 10                                                   
+      IF (L.NE.LCUM(N)) GOTO 10                                                 
+      SOM=0.                                                                    
+      LL1=LCUM(N-1)+1                                                           
+      LL2=LCUM(N)                                                               
+      DO 19 LL=LL1,LL2                                                          
+19    SOM=SOM+A(LL)                                                             
+      SOM=-SOM                                                                  
+      VAR=0.                                                                    
+      DO 30 LX=LL1,LL2                                                          
+      DO 30 LY=LL1,LL2                                                          
+30    VAR=VAR+W(LX,LY)                                                          
+      VAR=SQRT(ABS(S2*VAR/ICARD))
+      TL=ABS(SOM/VAR)                                                           
+      PL=2.*(1.-RNKSF(3,TL,NDL,NDL))                                            
+      WRITE(IMP,1250) SOM,VAR,TL,PL                                             
+      N=N+1                                                                     
+10    CONTINUE                                                                  
+      T0=ABS(A(LTOT)/SA(LTOT))                                                  
+      P0=2.*(1.-RNKSF(3,T0,NDL,NDL))                                            
+      WRITE(IMP,1300) A(LTOT),SA(LTOT),T0,P0                                    
+      R=SQRT(ABS(R2))
+      S=SQRT((S2))
+      WRITE(IMP,1400) SCE,R,R2,S2,S                                             
+      SM=0.                                                                     
+      DO 20 L=1,LCARD                                                           
+      SM=SM+A(L)*W(L,LTOT)                                                      
+20    CONTINUE                                                                  
+      F=ABS((SM/FLOAT(LCARD))/(S2/FLOAT(ICARD)))
+      PF=1.-RNKSF(4,F,LCARD,NDL)                                                
+      WRITE(IMP,1500) LCARD,F,LCARD,NDL,PF                                      
+1000  FORMAT(1H0,74(1H-)/1H0,30HAJUSTEMENT DES MOINDRES-CARRES,                 
+     1 22H (AVEC TERME CONSTANT)/1H0,15X,I5,11H  INDIVIDUS,6X,                  
+     2  I3,2X,30HVARIABLES (CONSTANTE EN QUEUE) /1H ,74(1H-) /)                 
+1100  FORMAT(1H0,42HVARIABLE           COEFFICIENT  ECART-TYPE ,                
+     1   2X,7HSTUDENT,I4,3X,13HPROB-CRITIQUE )                                  
+1200  FORMAT(1H0,3X,I2,12X,4F12.4)                                              
+1250  FORMAT(1H0,17X,4F12.4)                                                    
+1300  FORMAT(1H0,9HCONSTANTE,8X,4F12.4)                                         
+1400  FORMAT(/1H0,27HSOMME DES CARRES DES ECARTS,9X,5HSCE =,F15.4//             
+     1   1H ,41HCOEFFICIENT DE CORRELATION MULTIPLE   R = ,F6.4,                
+     2    10X,4HR2 =,F6.4//1H ,28HVARIANCE ESTIMEE DES RESIDUS ,9X,             
+     3     4HS2 =,F12.4,4X,3HS =,F12.4/)                                        
+1500  FORMAT(1H0,48HTEST DE NULLITE SIMULTANEE DES COEFFICIENTS DES  ,          
+     1  I3,11H  VARIABLES/1H0,8HFISHER =,F10.3,4X,15HDEGRES DE LIB =,           
+     2   I3,I5,3X,16HPROBA-CRITIQUE =,F8.4//1H ,74(1H-)//)                      
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE EDIVP(KDIM,MODE,M,VP,TRACE)
+      COMMON /ENSOR/LEC,IMP
+      DIMENSION VP(KDIM)
+      DATA NOIR/1H*/
+      WRITE(IMP,600) TRACE
+      CUMUL=0.0
+      DO 10 L=MODE,M
+      POURC=100.0*VP(L)/TRACE
+      CUMUL=CUMUL+POURC
+      LNOIR=POURC+0.5
+      IF (LNOIR.LE.0) LNOIR=1
+10    WRITE(IMP,610) L,VP(L),POURC,CUMUL,(NOIR,K=1,LNOIR)
+      RETURN
+600   FORMAT(1H1/1H0,10X,37HEDITION DES VALEURS PROPRES  (SOMME = ,
+     1       F9.6,2H )//1H ,'      VAL.PROP  POURC  CUMUL  ',
+     2      'HISTOGRAMME DES VALEURS'/)
+610   FORMAT(1H ,I3,1X,F10.5,F7.2,F7.2,1X,100A1)
+      END
+      SUBROUTINE EFEGO(ICARD,V,QT,NCLAS,X,KV)                                   
+      DIMENSION V(ICARD),QT(NCLAS),X(ICARD),KV(ICARD)                           
+      DO 10 I=1,ICARD                                                           
+10    X(I)=V(I)                                                                 
+      NB=NCLAS-1                                                                
+      CALL QUANT (ICARD,X,QT,NB,KV)                                             
+      CALL BOFIX(ICARD,V,QT,NB)                                                 
+      RETURN                                                                    
+      END        
+	SUBROUTINE EPUR4(IDIM,ICARD,X,Y,ID,MOD,PEX,KP,KLIC,KODE,NOR)
+	DIMENSION X(IDIM),Y(IDIM),ID(IDIM),KLIC(500)
+	COMMON /ENSOR/LEC,IMP	
+        DATA SEUIL/1.0E-07/
+	IF (PEX.LE.0.0) RETURN
+	KODE=0
+	N1=ICARD+1
+	IF (N1.GT.IDIM) GOTO 100
+	X(N1)=0.0
+	Y(N1)=0.0
+	IF (NOR.NE.1) N1=ICARD
+	SX=0.0
+	SY=0.0
+	DO 10 I=1,ICARD
+	SX=SX+X(I)*X(I)
+10	SY=SY+Y(I)*Y(I)
+	SX=SQRT(SX/FLOAT(ICARD))
+	SY=SQRT(SY/FLOAT(ICARD))
+	PX=PEX*SX
+	PY=PEX*SY
+	KP=0
+	PIN=PEX+20.0
+	DO 30 I=1,ICARD
+	IF (ABS(X(I)).GT.PX) GOTO 20
+	IF (ABS(Y(I)).LE.PY) GOTO 30
+20	KP=KP+1
+	IF (MOD.NE.1.AND.KP.EQ.1) WRITE(IMP,120) PEX
+	IF (MOD.NE.1.AND.KP.EQ.1) WRITE(IMP,130)
+	IF (KP.GT.500) GOTO 100
+	KLIC(KP)=I
+	IF (MOD.NE.1) WRITE(IMP,110) ID(I),X(I),Y(I)
+	X(I)=X(I)/PIN
+	Y(I)=Y(I)/PIN
+30	CONTINUE
+	IF (KP.EQ.0) GOTO 90
+	IF (MOD.EQ.4) WRITE(IMP,130)
+	CALL BORNS(IDIM,N1,Y,YMIN,YMAX)
+	CALL BORNS(IDIM,N1,X,XMIN,XMAX)
+	IF (XMIN.EQ.0.) XMIN=SEUIL
+	IF (XMAX.EQ.0.) XMAX=SEUIL
+	T1=YMAX/XMAX
+	T2=YMAX/XMIN
+	T3=YMIN/XMIN
+	T4=YMIN/XMAX
+	DO 80 K=1,KP
+	KLK=KLIC(K)
+	U=X(KLK)
+	V=Y(KLK)
+	IF (U.EQ.0.) U=SEUIL
+	T=V/U
+	A=YMAX
+	IF (U.GT.0.0.AND.(T4.LT.T.AND.T.LT.T1)) GOTO 40
+	IF (U.LT.0.0.AND.(T2.LT.T.AND.T.LT.T3)) GOTO 50
+	IF (V.LT.0.) A=YMIN
+	V=A
+	IF (T.EQ.0.) T=SEUIL
+	U=A/T
+	GOTO 70
+40	A=XMAX
+	GOTO 60
+50	A=XMIN
+60	U=A
+	V=A*T
+70	CONTINUE
+	IF (V.GT.YMAX) V=YMAX
+	IF (U.GT.XMAX) U=XMAX
+	X(KLK)=U
+	Y(KLK)=V
+80	CONTINUE
+	IF (KP.NE.0.AND.MOD.EQ.1) WRITE(IMP,140) KP,PEX
+90	CONTINUE
+	RETURN
+100	KODE=1
+	RETURN
+110	FORMAT(1H ,2H *,A4,1X,1H*,2(F15.5,8X,1H*))
+120	FORMAT(///1H ,25X,9HATTENTION//1H ,
+     1         39HLES POINTS CI-DESSOUS ETAIENT A PLUS DE ,F5.1,
+     2	       24H  ECARTS-TYPES DU CENTRE /1H ,11HILS ONT ETE,
+     3         34H RAMENES SUR LE CADRE DU GRAPHIQUE  //)
+130 	FORMAT(1H ,28(2H *))
+140	FORMAT(1H ,5X,I4,18H  POINTS A PLUS DE ,F5.1,14H  ECARTS-TYPES,
+     1        42H DE L'ORIGINE ONT ETE RAMENES SUR LE CADRE)
+	END
+	SUBROUTINE GPLAN(IDIM,ICARD,JX,JY,X,Y,ID,MOD,NLIGN,NPAGE,PEX,NOR)
+	DIMENSION ID(IDIM),LD1(500),LD2(500),KLAC(500)
+	DIMENSION LA(6),MA(6),NA(6),EX(12),KLIC(500)
+	DIMENSION X(IDIM),Y(IDIM)
+	DIMENSION XD1(500),YD1(500),XD2(500),YD2(500)
+	COMMON /ENSOR/LEC,IMP
+	DATA MA/1H-,1H ,1H!,1H!,1H.,1H+/
+	DATA NA/4H----,4H    ,4H!   ,4H   !,4H .  ,4H +  /
+	N1=ICARD
+	IF (NOR.EQ.1) N1=ICARD+1
+	IF (N1.GT.IDIM) WRITE(IMP,1130)
+	WRITE(IMP,1110) ICARD,JX,JY,JX,JY
+	CALL EPUR4(IDIM,ICARD,X,Y,ID,MOD,PEX,KP,KLIC,KODE,NOR)
+	IF (KODE.EQ.1) GOTO 160
+	WRITE(IMP,1000)
+	DO 10 K=1,6
+	LA(K)=NA(K)
+10	IF (MOD.EQ.1) LA(K)=MA(K)
+	IF (NOR.NE.1) GOTO 20
+	ID(N1)=LA(6)
+	X(N1)=0.0
+	Y(N1)=0.0
+20	CALL BORNS(IDIM,N1,X,XMIN,XMAX)
+	CALL BORNS(IDIM,N1,Y,YMIN,YMAX)
+	IF (MOD.EQ.1) K1=123
+	IF (MOD.EQ.4) K1=30
+	K2=K1+1
+	K3=K1*NPAGE
+	NL=NLIGN
+	FC=K3
+	FPAGE=NPAGE
+	IF (NL.NE.0) GOTO 30
+	NL=((YMAX-YMIN)/(XMAX-XMIN))*FPAGE*74.0
+30	IF (NL.LE.12) NL=12
+	FL=NL
+	S=(XMAX-XMIN)/FC
+	T=(YMAX-YMIN)/FL
+	NINT=5*NPAGE+1
+	ESPX=FC/(5.0*NPAGE)
+	DO 40 J=1,NINT
+40	EX(J)=XMIN+S*ESPX*FLOAT(J-1)
+	KKO=0.50001-(XMIN/S)
+	LLO=0.50001+ABS(YMAX/T)
+	DO 50 I=1,N1
+	K=(X(I)-XMIN)/S+0.500001
+	L=(YMAX-Y(I))/T+0.500001
+	IF (K.EQ.0) K=1
+	IF (L.EQ.0) L=1
+	X(I)=K+0.0001
+50	Y(I)=L+0.0001
+	KPT=0
+55	KPT=KPT+1
+	J=0
+	DO 130 LL=1,NL
+	EY=YMAX-T*FLOAT(LL-1)
+	DO 60 KK=1,K3
+	KLIC(KK)=0
+	KLAC(KK)=LA(2)
+	IF (KK.EQ.KKO.OR.LL.EQ.LLO) KLAC(KK)=LA(5)
+60	CONTINUE
+	KLAC(1)=LA(3)
+	KLAC(K3)=LA(4)
+	DO 90 I=1,N1
+	L=Y(I)
+	IF (L.NE.LL) GOTO 90
+	K=X(I)
+	IF (KLIC(K)) 80,70,80
+70	KLIC(K)=I
+	GOTO 90
+80	IK=KLIC(K)
+	J=J+1
+	IF (MOD.EQ.1) GOTO 90
+	IF (J.GT.500) GOTO 160
+	LD1(J)=ID(IK)
+	XD1(J)=X(IK)*S+XMIN
+	YD1(J)=YMAX-Y(IK)*T
+	LD2(J)=ID(I)
+	XD2(J)=X(I)*S+XMIN
+	YD2(J)=YMAX-Y(I)*T
+90	CONTINUE
+	DO 100 KK=1,K3
+	IF (LL.EQ.1.OR.LL.EQ.NL) KLAC(KK)=LA(1)
+	IK=KLIC(KK)
+	IF (IK.NE.0) KLAC(KK)=ID(IK)
+100	CONTINUE
+	IF (MOD.NE.1) GOTO 120
+110	IF (KPT.EQ.1) WRITE(IMP,1010) EY,(KLAC(K),K=1,K1)
+	IF (KPT.EQ.2) WRITE(IMP,1030) (KLAC(K),K=K2,K3),EY
+	GOTO 130
+120	IF (KPT.EQ.1) WRITE(IMP,1020) EY,(KLAC(K),K=1,K1)
+	IF (KPT.EQ.2) WRITE(IMP,1040) (KLAC(K),K=K2,K3),EY
+130	CONTINUE
+	IF (KPT.EQ.1) WRITE(IMP,1050) (EX(K),K=1,6)
+	IF (NPAGE.EQ.2.AND.KPT.EQ.1) WRITE(IMP,1000)
+	IF (NPAGE.GT.KPT) GOTO 55
+	IF (KPT.EQ.2) WRITE(IMP,1060) (EX(K),K=7,11)
+	IF (J.EQ.0.OR.MOD.EQ.1) GOTO 150
+	WRITE(IMP,1070)
+	WRITE(IMP,1080)
+	DO 140 L=1,J
+140	WRITE(IMP,1090) LD1(L),XD1(L),YD1(L),LD2(L),XD2(L),YD2(L)
+	WRITE(IMP,1080)
+150	CONTINUE
+	IF (J.NE.0.AND.MOD.EQ.1) WRITE(IMP,1100) J
+	RETURN
+160	WRITE(IMP,1120)
+	RETURN
+1000	FORMAT(1H1)
+1010	FORMAT(1H ,F8.3,1X,123A1)
+1020	FORMAT(1H ,F8.3,2X,30A4)
+1030	FORMAT(1H ,123A1,1X,F8.3)
+1040	FORMAT(1H ,30A4,2X,F8.3)
+1050	FORMAT(1H ,2X,5(F10.3,14X),F10.3)
+1060	FORMAT(1H ,18X,4(F10.3,14X),F10.3)
+1070	FORMAT(///1H ,50X,28HPOINTS MULTIPLES PAR COUPLE /
+     1	/1H ,2(8H POINT *,8X,8HABSCISSE,7X,1H*,8X,8HORDONNEE,7X,
+     2  1H*,10X)/1H ,8H   VU  *,2(8X,9HAPPROCHEE,6X,1H*),10X,
+     3  8H CACHE *,2(8X,9HAPPROCHEE,6X,1H*))
+1080	FORMAT(1H ,2(28(2H *),10X))
+1090	FORMAT(1H ,2(2H *,A4,2H *,2(F15.5,8X,1H*),10X))
+1100	FORMAT(/1H ,30H NOMBRE DE POINTS DOUBLES =   ,I5/)
+1110	FORMAT(1H1,25X,22HPLAN DE PROJECTION DES ,I6,8H  POINTS,
+     1	  14H SUR LES AXES  ,I2,6H  ET  ,I2/1H ,130(1H-)//1H ,30X,
+     2     4HAXE ,I2,14H  /HORIZONTAL ,10X,4HAXE ,I2,12H /VERTICAL //)
+1120	FORMAT(///1H ,10X,16HGRAPHIQUE REFUSE  /
+     1   1H ,10X,37HSOIT PLUS DE 500 POINTS DOUBLES EN A4/
+     2   1H ,10X,36HSOIT PLUS DE 500 POINTS SUR LE CADRE/1H1)
+1130	FORMAT(/1H ,47H(ATTENTION  DEFAUT DE DIMENSION DANS S/P GPLAN)/)
+	END
+C ********************************
+C *                              *
+C *    INVERSION DE MATRICES     *
+C *                              *
+C ********************************
+	SUBROUTINE INVER (A,N,NDIM,IFLAG)
+	DIMENSION A(NDIM,NDIM)
+	COMMON /ENSOR/LEC,IMP
+	IFLAG=0
+	DO 200 K=1,N
+	D=A(K,K)
+	IF (D.EQ.0.0) GOTO 300
+	A(K,K)=1
+	DO 100 J=1,N
+100	A(K,J)=A(K,J)/D
+	DO 200 I=1,N
+	IF (I.EQ.K) GOTO 200
+	D=A(I,K)
+	A(I,K)=0.0
+	DO 200 J=1,N
+	A(I,J)=A(I,J)-D*A(K,J)
+200	CONTINUE
+	RETURN
+300	WRITE(IMP,1000)
+1000	FORMAT(1H0,'**** PIVOT NUL ****')
+	IFLAG=1
+	RETURN
+	END
+
+      SUBROUTINE KLICO (MODE,NDIM,KDIM,N,K,T,IDN,IDK)                                
+      DIMENSION T(NDIM,KDIM),IDN(NDIM),IDK(KDIM)                                         
+      COMMON /ENSOR/LEC,IMP                                                     
+      KOL=5*(MODE+1)                                                            
+      DO 120 L=1,K,KOL                                                          
+      KFIN=L+(KOL-1)                                                            
+      IF (KFIN.GT.K) KFIN=K                                                     
+      WRITE(IMP,810)                                                            
+      GOTO (10,20,30) , MODE                                                    
+10    WRITE(IMP,610) (IDK(J),J=L,KFIN)                                          
+      GOTO 40                                                                   
+20    WRITE(IMP,620) (IDK(J),J=L,KFIN)                                          
+      GOTO 40                                                                   
+30    WRITE(IMP,630) (IDK(J),J=L,KFIN)                                          
+40    WRITE(IMP,800)                                                            
+      DO 80 I=1,N                                                               
+      GOTO (50,60,70) ,MODE                                                     
+50    WRITE(IMP,710) IDN(I),(T(I,J),J=L,KFIN)                                   
+      GOTO 80                                                                   
+60    WRITE(IMP,720) IDN(I),(T(I,J),J=L,KFIN)                                   
+      GOTO 80                                                                   
+70    WRITE(IMP,730) IDN(I),(T(I,J),J=L,KFIN)                                   
+80    CONTINUE                                                                  
+      WRITE(IMP,800)                                                            
+      GOTO (90,100,110) ,MODE                                                   
+90    WRITE(IMP,610) (IDK(J),J=L,KFIN)                                          
+      GOTO 120                                                                  
+100   WRITE(IMP,620) (IDK(J),J=L,KFIN)                                          
+      GOTO 120                                                                  
+110   WRITE(IMP,630) (IDK(J),J=L,KFIN)                                          
+120   CONTINUE                                                                  
+      RETURN                                                                    
+610   FORMAT(1H0,9X,10(4X,A4,4X))                                               
+620   FORMAT(1H0,9X,15(2X,A4,2X))                                               
+630   FORMAT(1H0,9X,20(1X,A4,1X))                                               
+710   FORMAT(1H ,A6,2X,10F12.3)                                                 
+720   FORMAT(1H ,A6,2X,15F8.2)                                                  
+730   FORMAT(1H ,A6,2X,20F6.0)                                                  
+800   FORMAT(1H0,130(1H-))                                                      
+810   FORMAT(1H ,///)                                                           
+      END
+      SUBROUTINE LIRAF(NDIM,KDIM,NTOT,N,KTOT,K,KVVP,NGRAF,NPAGE,
+     1                 NLIGN,PEX,F,KODI,KODJ,IDI,IDJ)
+      COMMON /ENSOR/LEC,IMP
+      DIMENSION F(NDIM,KDIM),IDI(NDIM),IDJ(KDIM)
+      DIMENSION KODI(NDIM),KODJ(KDIM),FMT(20)
+      IUNIT=8
+      READ(LEC,500) NTOT,N,KTOT,K
+      WRITE(IMP,610) NTOT,N,KTOT,K
+      DO 5 I=1,NTOT
+5     KODI(I)=I
+      DO 6 J=1,KTOT
+6     KODJ(J)=J
+      IF (NTOT.EQ.N) GOTO 10
+      READ(LEC,520) (KODI(I),I=1,NTOT)
+      WRITE(IMP,630) (KODI(I),I=1,NTOT)
+10    IF (KTOT.EQ.K) GOTO 20
+      READ(LEC,520) (KODJ(J),J=1,KTOT)
+      WRITE(IMP,640) (KODJ(J),J=1,KTOT)
+20    CONTINUE
+      READ(LEC,510) KVVP,NGRAF,NPAGE,NLIGN,PEX
+      IF (NGRAF.GT.(KVVP-1)) NGRAF=KVVP-1
+      WRITE(IMP,620) KVVP,NGRAF,NPAGE,NLIGN,PEX
+      READ(LEC,530) (IDJ(J),J=1,KTOT)
+      READ(LEC,530) (FMT(L),L=1,20)
+      WRITE(IMP,650) (FMT(L),L=1,20)
+      DO 30 I=1,NTOT
+30    READ(IUNIT,FMT) IDI(I),(F(I,J),J=1,KTOT)
+      RETURN
+500   FORMAT(6I4)
+510   FORMAT(4I4,F4.1)
+520   FORMAT(80I1)
+530   FORMAT(20A4)
+610   FORMAT(1H0,14HLIGNES  NTOT =,I4,5H  N =,I4,10X,8HCOLONNES,
+     1       8H  KTOT =,I4,5H  K =,I4/)
+620   FORMAT(1H0,38HPARAMETRES/KVVP NGRAF NPAGE NLIGN PEX/10X,4I5,F5.1)
+630   FORMAT(1H0,39HLIGNES ACTIVES (1) OU ILLUSTRATIVES (0) /
+     1       1H ,100I1/1H ,100I1)
+640   FORMAT(1H0,41HCOLONNESACTIVES (1) OU ILLUSTRATIVES (0) /
+     1       1H ,100I1/1H ,100I1/)
+650   FORMAT(1H0,17HFORMAT DE LECTURE,10X,20A4/)
+      END
+C     PROGRAMME  MAHAL 2                                                        
+C     ANALYSE DISCRIMINANTE PAS A PAS ENTRE 2 GROUPES                           
+C     VERSION IBM 370 DU 18/07/82.                                              
+C     ORIGINE : METHODES ET PROGRAMMES D'ANALYESE DISCRIMINANTE                 
+C     J-M ROMEDER.                                                              
+C***********************************************************************        
+C                                                                               
+C     CI DESSOUS SONT INDIQUEES LES DIMENSIONS FORMELLES DES TABLEAUX           
+C     UTILISES                                                                  
+C                                                                               
+C     DIMENSION NOM1(20),NOM2(20)                                               
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C     COMMON/BL4/ NPGTE(2),CLATE(2,2),XTE(NTTE,NV),XNA(NA,NV)                   
+C                                                                               
+C     NV = NOMBRE DE VARIABLES                                                  
+C     NT = NOMBRE TOTAL D INDIVIDUS  (ECHANTILLON DE BASE)                      
+C     LIM = NOMBRE MAXIMUM DE PAS DEMANDE                                       
+C     NTTE = NOMBRE TOTAL D INDIVIDUS  (ECHANTILLON TEST)                       
+C     NA = NOMBRE D INDIVIDUS ANONYMES                                          
+C                                                                               
+C     ATTENTION DANS LES COMMONS DU PROGRAMME IL Y A DES VARIABLES NON          
+C     DIMENSIONNES QUE NOUS N AVONS PAS INDIQUEES CI DESSUS                     
+C                                                                               
+C***********************************************************************        
+      SUBROUTINE MAHA2 (TABD,FIND1,FIND2)                                       
+      DIMENSION FV(60),NOM1(20),NOM2(20)                                        
+      DIMENSION TABD(20,500)                                                    
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      COMMON /BL4/NTEST,NA,NPGTE(2),CLATE(2,2),XTE(50,20),XNA(40,20)            
+      DATA NOM2   /'TYPE','2 AV','EC C','OMPL','ICAT','IONS',14*'    '/         
+      DATA IPR1 /'DIAB'/                                                        
+      DATA IPR2 /'ETE '/                                                        
+      NOE=5                                                                     
+      NOS=6                                                                     
+      NV=10                                                                     
+      LIM=5                                                                     
+      NTEST=0                                                                   
+      NA=0                                                                      
+      NPG(1)=IFIX(FIND2)                                                        
+      NPG(2)=IFIX(FIND1-FIND2)                                                  
+      NT=0                                                                      
+      DO 7 I=1,2                                                                
+    7 NT=NT+NPG(I)                                                              
+      DO 1 I=1,20                                                               
+      DO 2 J=1,500                                                              
+      X(J,I)=TABD(I,J)                                                          
+   2  CONTINUE                                                                  
+   1  CONTINUE                                                                  
+      IF(NTEST.EQ.0) GOTO 18                                                    
+      READ(NOE,4)(NPGTE(I),I=1,2)                                               
+    4 FORMAT( 2I5)                                                              
+      NTTE=NPGTE(1)+NPGTE(2)                                                    
+      DO 19 I=1,NTTE                                                            
+   19 READ(NOE,FV) (XTE(I,J),J=1,NV)                                            
+   18 IF(NA.EQ.0) GOTO 14                                                       
+      DO 15 I=1,NA                                                              
+   15 READ(NOE,FV) (XNA(I,J),J=1,NV)                                            
+   14 WRITE(NOS,9) IPR1,IPR2,NV                                                 
+    9 FORMAT(20H1-PROGRAMME MAHAL 2-/                                           
+     148H0ANALYSE DISCRIMINANTE PAS A PAS ENTRE 2 GROUPES//                     
+     221H0NOM DU PROBLEME     2A4/                                              
+     322H0NOMBRE DE VARIABLES  I5)                                              
+      WRITE (NOS,13) (NOM1(J),J=1,20)                                           
+      WRITE (NOS,24) (NOM2(J),J=1,20)                                           
+   13 FORMAT (9H0GROUPE 1,3H : ,20A4)                                           
+   24 FORMAT (9H0GROUPE 2,3H : ,20A4)                                           
+      WRITE(NOS,20)                                                             
+   20 FORMAT(20H0ECHANTILLON DE BASE)                                           
+      DO 10 I=1,2                                                               
+   10 WRITE(NOS,5) I,NPG(I)                                                     
+    5 FORMAT(1H0,10X,28HNOMBRE D INDIVIDUS DU GROUPE I3,3H : ,I3)               
+      IF(NTEST.EQ.0) GOTO 23                                                    
+      WRITE(NOS,22)                                                             
+   22 FORMAT(17H0ECHANTILLON TEST)                                              
+      DO 21 I=1,2                                                               
+   21 WRITE(NOS,5) I,NPGTE(I)                                                   
+   23 IF(NA.EQ.0) GOTO 16                                                       
+      WRITE(NOS,17) NA                                                          
+   17 FORMAT(31H0NOMBRE D INDIVIDUS ANONYMES : I3)                              
+   16 CALL MOYEN                                                                
+      CALL ECTYP(NSTOP)                                                         
+      IF(NSTOP.EQ.1) GOTO 64                                                    
+      CALL COVTOT                                                               
+      CALL PASPAS                                                               
+   64 WRITE(NOS,3)                                                              
+    3 FORMAT(//46H0CARTE-PROBLEME FINI-RENCONTRE,TRAVAIL TERMINE)               
+   65 RETURN                                                                    
+      END                                                                       
+      SUBROUTINE MOYEN                                                          
+C***********************************************************************        
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C***********************************************************************        
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      ND=0                                                                      
+      DO 11 I=1,3                                                               
+      DO 11 J=1,NV                                                              
+   11 XM(I,J)=0.0                                                               
+      DO 10 I=1,2                                                               
+      NP=ND+1                                                                   
+      ND=NPG(I)+NP-1                                                            
+      DO 10 J=NP,ND                                                             
+      DO 10 K=1,NV                                                              
+      XM(I,K)=XM(I,K)+X(J,K)                                                    
+      XM(3,K)=XM(3,K)+X(J,K)                                                    
+   10 CONTINUE                                                                  
+      DO 100 I=1,2                                                              
+      DO 100 J=1,NV                                                             
+  100 XM(I,J)=XM(I,J)/NPG(I)                                                    
+      DO 101 J=1,NV                                                             
+  101 XM(3,J)=XM(3,J)/NT                                                        
+      WRITE(NOS,24) (I,I=1,2)                                                   
+   24 FORMAT(///20X,58H MOYENNE (LA DERNIERE COLONNE CONTIENT LA MOYENNE        
+     1 GLOBALE)/21X,7(1H*)////16X,6HGROUPE//17X,3(I5,5X)/)                      
+      WRITE(NOS,111)                                                            
+  111 FORMAT(9H0VARIABLE/)                                                      
+      DO 25 J=1,NV                                                              
+   25 WRITE(NOS,26) J,(XM(I,J),I=1,3)                                           
+   26 FORMAT(5X,I2,5X, 3F10.5)                                                  
+      RETURN                                                                    
+      END                                                                       
+      SUBROUTINE ECTYP(NSTOP)                                                   
+C***********************************************************************        
+C     DIMENSION ET(2,NV)                                                        
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C***********************************************************************        
+      DIMENSION ET(2,100)                                                       
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      ND=0                                                                      
+      DO 12 I=1,2                                                               
+      NP=ND+1                                                                   
+      ND=NP+NPG(I)-1                                                            
+      DO 12 K=1,NV                                                              
+      S=0.0                                                                     
+      DO 13 J=NP,ND                                                             
+      S2=(X(J,K)-XM(I,K))**2                                                    
+      S=S+S2                                                                    
+   13 CONTINUE                                                                  
+      ET(I,K)=S/NPG(I)                                                          
+      ET(I,K)=SQRT(ET(I,K))                                                     
+   12 CONTINUE                                                                  
+      WRITE(NOS,27) (I,I=1,2)                                                   
+   27 FORMAT(///20X,11H ECART TYPE/21X,10(1H*)////16X,6HGROUPE//17X,2(I5        
+     1,5X)/)                                                                    
+      WRITE(NOS,111)                                                            
+  111 FORMAT(9H0VARIABLE/)                                                      
+      DO 28 J=1,NV                                                              
+   28 WRITE(NOS,29) J,(ET(I,J),I=1,2)                                           
+   29 FORMAT(5X,I2,5X, 2F10.5)                                                  
+      NSTOP=0                                                                   
+      DO 1 I=1,NV                                                               
+      IF(ET(1,I).NE.0.0) GOTO 1                                                 
+      IF(ET(2,I).NE.0.0) GOTO 1                                                 
+      NSTOP=1                                                                   
+      GOTO 5                                                                    
+    1 CONTINUE                                                                  
+      GOTO 7                                                                    
+    5 WRITE(NOS,6)                                                              
+    6 FORMAT(//91H0IL Y A MOINS UNE VARIABLE QUI A UN ECART TYPE NUL            
+     1POUR LA TOTALITE DES INDIVIDUS - STOP)                                    
+    7 RETURN                                                                    
+      END                                                                       
+      SUBROUTINE COVTOT                                                         
+C***********************************************************************        
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(MV,NV)                             
+C***********************************************************************        
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      DO 14 I=1,NV                                                              
+      DO 14 J=1,NV                                                              
+      T(I,J)=0.0                                                                
+      DO 14 K=1,NT                                                              
+      T(I,J)=T(I,J)+(X(K,I)-XM(3,I))*(X(K,J)-XM(3,J))                           
+   14 CONTINUE                                                                  
+      DO 15 I=1,NV                                                              
+      DO 15 J=1,NV                                                              
+   15 T(I,J)=T(I,J)/NT                                                          
+      RETURN                                                                    
+      END                                                                       
+      SUBROUTINE PASPAS                                                         
+C***********************************************************************        
+C     DIMENSION IMP(LIM)                                                        
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C     COMMON/BL2/ CLA(2,2),COEF(LIM),DIF(LIM),NVAR(NV)                          
+C     COMMON/BL3/ UC(LIM-1),C(LIM,LIM),U(LIM-1,LIM-1)                           
+C     COMMON/BL4/ NPGTE(2),CLATE(2,2),XTE(NTTE,NV),XNA(NA,NV)                   
+C***********************************************************************        
+      DIMENSION IMP(30)                                                         
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      COMMON /BL2/IENT,NPAS,NLIM,NV1,CONST,CLA(2,2),COEF(30),DIF(30),           
+     1NVAR(20)                                                                  
+      COMMON /BL3/US,UC(29),C(30,30),U(29,29)                                   
+      COMMON /BL4/NTEST,NA,NPGTE(2),CLATE(2,2),XTE(50,20),XNA(40,20)            
+      INTEGER CLA,CLATE                                                         
+      DO 66 I=1,NV                                                              
+   66 NVAR(I)=I                                                                 
+      PC2=0.0                                                                   
+      DO 53 NPAS=1,LIM                                                          
+      PC1=PC2                                                                   
+      IF(NPAS-NV) 300,400,300                                                   
+  400 IENT=NVAR(1)                                                              
+      GO TO 500                                                                 
+  300 NLIM=NV-NPAS+1                                                            
+      CALL RECHER                                                               
+      IF(NPAS.EQ.1) GOTO 44                                                     
+  500 J=NV                                                                      
+      LS=NPAS-1                                                                 
+      DO 57 I=1,LS                                                              
+      K=NVAR(J)                                                                 
+      UC(I)=T(K,IENT)                                                           
+      J=J-1                                                                     
+   57 CONTINUE                                                                  
+      US=T(IENT,IENT)                                                           
+      CALL INVESC(LS)                                                           
+      GOTO 45                                                                   
+   44 C(1,1)=1./T(IENT,IENT)                                                    
+   45 I=1                                                                       
+      NV1=NV-NPAS                                                               
+   61 K=NVAR(I)                                                                 
+      IF(K.EQ.IENT) GOTO 60                                                     
+      I=I+1                                                                     
+      GOTO 61                                                                   
+   60 IF(I.GT.NV1) GOTO 62                                                      
+      DO 63 J=I,NV1                                                             
+   63 NVAR(J)=NVAR(J+1)                                                         
+      NVAR(NV1+1)=IENT                                                          
+   62 CONTINUE                                                                  
+      DIF(NPAS)=XM(1,IENT)-XM(2,IENT)                                           
+      CALL CLASSE                                                               
+      POUR=0.0                                                                  
+      DO 47 I=1,2                                                               
+   47 POUR=POUR+CLA(I,I)                                                        
+      T1=NT                                                                     
+      PC2=(POUR*100.0)/T1                                                       
+      IF(PC1.LE.PC2) GOTO 80                                                    
+      WRITE(NOS,600)                                                            
+  600 FORMAT(//63H LE POURCENTAGE DE L ECHANTILLON DE BASE DECROIT AU PA        
+     1S SUIVANT//)                                                              
+      NRET=NPAS-1                                                               
+      CALL RETOUR(NRET)                                                         
+   80 DO 59 I=1,NPAS                                                            
+      DO 59 J=1,NPAS                                                            
+   59 U(I,J)=C(I,J)                                                             
+      IMP(NPAS)=IENT                                                            
+      WRITE(NOS,20) NPAS                                                        
+   20 FORMAT(1H0,120(1H*)//12H0PAS NUMERO ,I4//)                                
+      WRITE(NOS,48)(IMP(I),I=1,NPAS)                                            
+   48 FORMAT(24H0VARIABLES ENTREES :     ,10I6 ///(24X,10I6))                   
+      WRITE(NOS,5)                                                              
+    5 FORMAT(//20X,32H FONCTION LINEAIRE DISCRIMINANTE/21X,31(1H*))             
+      IF(NPAS.GT.10) GOTO 13                                                    
+      WRITE(NOS,12) (IMP(I),I=1,NPAS)                                           
+   12 FORMAT(////25X,18HVARIABLE NUMERO : /10H0CONSTANTE,7X,10I10)              
+      WRITE(NOS,6)                                                              
+    6 FORMAT(/)                                                                 
+      WRITE(NOS,7) CONST,(COEF(I),I=1,NPAS)                                     
+    7 FORMAT(F8.3,10X,10F10.3)                                                  
+      GOTO 14                                                                   
+   13 WRITE(NOS,12) (IMP(I),I=1,10)                                             
+      WRITE(NOS,6)                                                              
+      WRITE(NOS,7) CONST,(COEF(I),I=1,10)                                       
+      N2=10                                                                     
+   17 N1=N2+1                                                                   
+      N2=N2+10                                                                  
+      IF(N2.GT.NPAS) N2=NPAS                                                    
+      WRITE(NOS,15) (IMP(I),I=N1,N2)                                            
+   15 FORMAT(////25X,18HVARIABLE NUMERO - //17X,10I10)                          
+      WRITE(NOS,6)                                                              
+      WRITE(NOS,16) (COEF(I),I=N1,N2)                                           
+   16 FORMAT(18X,10F10.3)                                                       
+      IF(N2.NE.NPAS) GOTO 17                                                    
+   14 WRITE(NOS,6)                                                              
+      IF(NPAS.NE.1) GOTO 9                                                      
+      WRITE(NOS,8)                                                              
+    8 FORMAT(/39H0A CHAQUE PAS UN INDIVIDU EST AFFECTE -/10X,89HAU GROUP        
+     1E 1 SI SA VALEUR POUR LA FONCTION LINEAIRE DISCRIMINANTE EST STRIC        
+     2TEMENT POSITIVE/10X,44HAU GROUPE 2 SI ELLE EST STRICTEMENT NEGATIV        
+     3E/10X,35HPAS D AFFECTATION SI ELLE EST NULLE//)                           
+    9 WRITE(NOS,49) (I,I=1,2)                                                   
+   49 FORMAT(//20X,47H TABLEAU DE CLASSEMENT DE L ECHANTILLON DE BASE/21        
+     1X,46(1H*)//25X,20HGROUPE D AFFECTATION//26X,2(I4,3X)/)                    
+      WRITE(NOS,2)                                                              
+    2 FORMAT(/15H GROUPE ORIGINE/)                                              
+      DO 50 I=1,2                                                               
+   50 WRITE(NOS,4) I,(CLA(I,J),J=1,2)                                           
+    4 FORMAT(15X,I5,3X,2I7///)                                                  
+      WRITE(NOS,10) PC2                                                         
+   10 FORMAT(//30H0POURCENTAGE DE BIEN CLASSES :,F10.2///)                      
+      IF(NTEST.EQ.0) GOTO 11                                                    
+      WRITE(NOS,1) (I,I=1,2)                                                    
+    1 FORMAT(//20X,44H TABLEAU DE CLASSEMENT DE L ECHANTILLON TEST/21X,4        
+     13(1H*)///25X,20HGROUPE D AFFECTATION//26X,2(I4,3X)/)                      
+      WRITE(NOS,2)                                                              
+      DO 3 I=1,2                                                                
+    3 WRITE(NOS,4) I,(CLATE(I,J),J=1,2)                                         
+      PCTE=CLATE(1,1)+CLATE(2,2)                                                
+      TTE=NPGTE(1)+NPGTE(2)                                                     
+      PCTE=(PCTE*100.0)/TTE                                                     
+      WRITE(NOS,10) PCTE                                                        
+   11 IF(PC2.EQ.100.0) GOTO 200                                                 
+   53 CONTINUE                                                                  
+  200 CALL RETOUR(NPAS)                                                         
+   64 RETURN                                                                    
+      END                                                                       
+      SUBROUTINE INVESC(M)                                                      
+C***********************************************************************        
+C     DIMENSION XX(LIM),B(LIM,LIM)                                              
+C     COMMON/BL3/ UC(LIM-1),C(LIM,LIM),U(LIM-1,LIM-1)                           
+C***********************************************************************        
+      DIMENSION XX(30),B(30,30)                                                 
+      COMMON /BL3/US,UC(29),C(30,30),U(29,29)                                   
+      N=M+1                                                                     
+      Z=0.                                                                      
+      DO 10 J=1,M                                                               
+      XX(J)=0.                                                                  
+      DO 11 K=1,M                                                               
+   11 XX(J)=XX(J)+U(J,K)*UC(K)                                                  
+      Z=Z+UC(J)*XX(J)                                                           
+      DO 10 I=1,M                                                               
+      C(I,J)=0.                                                                 
+   10 B(I,J)=UC(I)*XX(J)                                                        
+      Z=US-Z                                                                    
+      DO 20 J=1,M                                                               
+      C(J,N)=-XX(J)/Z                                                           
+      C(N,J)=C(J,N)                                                             
+      DO 20 K=1,M                                                               
+      B(K,J)=B(K,J)/Z                                                           
+      IF(K.EQ.J) B(K,J)=B(K,J)+1.                                               
+      DO 20 I=1,M                                                               
+   20 C(I,J)=C(I,J)+U(I,K)*B(K,J)                                               
+      C(N,N)=1./Z                                                               
+      RETURN                                                                    
+      END                                                                       
+      SUBROUTINE RECHER                                                         
+C***********************************************************************        
+C     DIMENSION CAL(LIM)                                                        
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C     COMMON/BL2/ CLA(2,2),COEF(LIM),DIF(LIM),NVAR(NV)                          
+C     COMMON/BL3 /UC(LIM-1),C(LIM,LIM),U(LIM-1,LIM-1)                           
+C***********************************************************************        
+      DIMENSION CAL(30)                                                         
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      COMMON /BL2/IENT,NPAS,NLIM,NV1,CONST,CLA(2,2),COEF(30),DIF(30),           
+     1NVAR(20)                                                                  
+      COMMON /BL3/US,UC(29),C(30,30),U(29,29)                                   
+      DMAX=0.0                                                                  
+      DO 55 M1=1,NLIM                                                           
+      M=NVAR(M1)                                                                
+      IF(NPAS.EQ.1) GOTO 42                                                     
+      J=NV                                                                      
+      LS=NPAS-1                                                                 
+      DO 54 I=1,LS                                                              
+      K=NVAR(J)                                                                 
+      UC(I)=T(K,M)                                                              
+      J=J-1                                                                     
+   54 CONTINUE                                                                  
+      US=T(M,M)                                                                 
+      CALL INVESC(LS)                                                           
+      GOTO 43                                                                   
+   42 U(1,1)=T(M,M)                                                             
+      C(1,1)=1./U(1,1)                                                          
+   43 DIF(NPAS)=XM(1,M)-XM(2,M)                                                 
+      DO 57 J=1,NPAS                                                            
+      CAL(J)=0.0                                                                
+      DO 57 K=1,NPAS                                                            
+   57 CAL(J)=CAL(J)+DIF(K)*C(K,J)                                               
+      DQ2=0.0                                                                   
+      DO 60 J=1,NPAS                                                            
+   60 DQ2=DQ2+CAL(J)*DIF(J)                                                     
+      IF(DQ2.LT.DMAX) GOTO 55                                                   
+      DMAX=DQ2                                                                  
+      IENT=M                                                                    
+   55 CONTINUE                                                                  
+      RETURN                                                                    
+      END                                                                       
+      SUBROUTINE CLASSE                                                         
+C***********************************************************************        
+C     DIMENSION YBAR(LIM)                                                       
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C     COMMON/BL2/ CLA(2,2),COEF(LIM),DIF(LIM),NVAR(NV)                          
+C     COMMON/BL3/ UC(LIM-1),C(LIM,LIM),U(LIM-1,LIM-1)                           
+C     COMMON/BL4/ NPGTE(2),CLATE(2,2),XTE(NTTE,NV),XNA(NA,NV)                   
+C***********************************************************************        
+      DIMENSION YBAR(30)                                                        
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      COMMON /BL2/IENT,NPAS,NLIM,NV1,CONST,CLA(2,2),COEF(30),DIF(30),           
+     1NVAR(20)                                                                  
+      COMMON /BL3/US,UC(29),C(30,30),U(29,29)                                   
+      COMMON /BL4/NTEST,NA,NPGTE(2),CLATE(2,2),XTE(50,20),XNA(40,20)            
+      INTEGER CLA,CLATE                                                         
+      DO 18 I=1,2                                                               
+      DO 18 J=1,2                                                               
+   18 CLA(I,J)=0                                                                
+      K=NV                                                                      
+      DO 22 M=1,NPAS                                                            
+      L1=NVAR(K)                                                                
+      DIF(M)=XM(1,L1)-XM(2,L1)                                                  
+      YBAR(M)=(NPG(1)*XM(1,L1)+NPG(2)*XM(2,L1))/(NPG(1)+NPG(2))                 
+      K=K-1                                                                     
+   22 CONTINUE                                                                  
+      DO 23 L2=1,NPAS                                                           
+      COEF(L2)=0.0                                                              
+      DO 23 L3=1,NPAS                                                           
+   23 COEF(L2)=COEF(L2)+DIF(L3)*C(L3,L2)                                        
+      CONST=0.0                                                                 
+      DO 24 L2=1,NPAS                                                           
+   24 CONST=CONST+COEF(L2)*YBAR(L2)                                             
+      CONST=-CONST                                                              
+      ND=0                                                                      
+      DO 19 I=1,2                                                               
+      NP=ND+1                                                                   
+      ND=NP+NPG(I)-1                                                            
+      DO 19 J=NP,ND                                                             
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 26 M=1,NPAS                                                            
+      L1=NVAR(K)                                                                
+      FQ=FQ+COEF(M)*X(J,L1)                                                     
+      K=K-1                                                                     
+   26 CONTINUE                                                                  
+      FQ=FQ+CONST                                                               
+      IF(FQ.GT.0.0) CLA(I,1)=CLA(I,1)+1                                         
+      IF(FQ.LT.0.0) CLA(I,2)=CLA(I,2)+1                                         
+   19 CONTINUE                                                                  
+      IF(NTEST.EQ.0) GOTO 3                                                     
+      DO 4 I=1,2                                                                
+      DO 4 J=1,2                                                                
+    4 CLATE(I,J)=0                                                              
+      ND=0                                                                      
+      DO 1 I=1,2                                                                
+      NP=ND+1                                                                   
+      ND=NP+NPGTE(I)-1                                                          
+      DO 1 J=NP,ND                                                              
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 2 M=1,NPAS                                                             
+      L1=NVAR(K)                                                                
+      FQ=FQ+COEF(M)*XTE(J,L1)                                                   
+      K=K-1                                                                     
+    2 CONTINUE                                                                  
+      FQ=FQ+CONST                                                               
+      IF(FQ.GT.0.0) CLATE(I,1)=CLATE(I,1)+1                                     
+      IF(FQ.LT.0.0) CLATE(I,2)=CLATE(I,2)+1                                     
+    1 CONTINUE                                                                  
+    3 RETURN                                                                    
+      END                                                                       
+      SUBROUTINE RETOUR(NRET)                                                   
+C***********************************************************************        
+C     DIMENSION YBAR(LIM),COF(LIM)                                              
+C     COMMON/BL1/ NPG(2),X(NT,NV),XM(3,NV),T(NV,NV)                             
+C     COMMON/BL2/ CLA(2,2),COEF(LIM),DIF(LIM),NVAR(NV)                          
+C     COMMON/BL3/ UC(LIM-1),C(LIM,LIM),U(LIM-1,LIM-1)                           
+C     COMMON/BL4/ NPGTE(2),CLATE(2,2),XTE(NTTE,NV),XNA(NA,NV)                   
+C***********************************************************************        
+      DIMENSION YBAR(30),COF(30)                                                
+      COMMON /BL1/NV,NT,NOS,LIM,NPG(2),X(500,20),XM(3,20),T(20,20)              
+      COMMON /BL2/IENT,NPAS,NLIM,NV1,CONST,CLA(2,2),COEF(30),DIF(30),           
+     1NVAR(20)                                                                  
+      COMMON /BL3/US,UC(29),C(30,30),U(29,29)                                   
+      COMMON /BL4/NTEST,NA,NPGTE(2),CLATE(2,2),XTE(50,20),XNA(40,20)            
+      INTEGER BL/'    '/                                                        
+      INTEGER JL(2)/'1','2'/                                                    
+      WRITE(NOS,1)                                                              
+    1 FORMAT(//20X,59HAFFECTATION ET VALEUR DE LA FONCTION LINEAIRE DISC        
+     1RIMINANTE/28X,43HPOUR LES INDIVIDUS DE L ECHANTILLON DE BASE//)           
+      K=NV                                                                      
+      DO 22 M=1,NRET                                                            
+      L1=NVAR(K)                                                                
+      YBAR(M)=(NPG(1)*XM(1,L1)+NPG(2)*XM(2,L1))/(NPG(1)+NPG(2))                 
+      K=K-1                                                                     
+   22 CONTINUE                                                                  
+      DO 23 L2=1,NRET                                                           
+      COF(L2)=0.0                                                               
+      DO 23 L3=1,NRET                                                           
+   23 COF(L2)=COF(L2)+DIF(L3)*U(L3,L2)                                          
+      CONS=0.0                                                                  
+      DO 24 L2=1,NRET                                                           
+   24 CONS=CONS+COF(L2)*YBAR(L2)                                                
+      CONS=-CONS                                                                
+      IB=JL(1)                                                                  
+      ND=0                                                                      
+      DO 19 I=1,2                                                               
+      WRITE(NOS,2) I                                                            
+    2 FORMAT(//3X,6HGROUPE,I2,4X,11HAFFECTATION,5X,8HFONCTION//)                
+      NIN=1                                                                     
+      NP=ND+1                                                                   
+      ND=NP+NPG(I)-1                                                            
+      DO 20 J=NP,ND                                                             
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 8 M=1,NRET                                                             
+      L1=NVAR(K)                                                                
+      FQ=FQ+COF(M)*X(J,L1)                                                      
+      K=K-1                                                                     
+    8 CONTINUE                                                                  
+      FQ=FQ+CONS                                                                
+      IA=BL                                                                     
+      IF(FQ.GT.0.0) IA=JL(1)                                                    
+      IF(FQ.LT.0.0) IA=JL(2)                                                    
+      IF(IA.EQ.IB) GOTO 3                                                       
+      WRITE(NOS,4) NIN,IA,FQ                                                    
+    4 FORMAT(4X,I3,14X,A1,9X,F7.3)                                              
+      GOTO 9                                                                    
+    3 WRITE(NOS,5) NIN,IA,FQ                                                    
+    5 FORMAT(4X,I3,13X,A1,10X,F7.3)                                             
+    9 NIN=NIN+1                                                                 
+   20 CONTINUE                                                                  
+      IB=JL(2)                                                                  
+   19 CONTINUE                                                                  
+      WRITE(NOS,10)                                                             
+   10 FORMAT(//20X,44HVALEUR DE LA FONCTION LINEAIRE DISCRIMINANTE/27X,2        
+     19HPOUR LES MOYENNES DES GROUPES//)                                        
+      DO 7 I=1,2                                                                
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 6 M=1,NRET                                                             
+      L1=NVAR(K)                                                                
+      FQ=FQ+COF(M)*XM(I,L1)                                                     
+      K=K-1                                                                     
+    6 CONTINUE                                                                  
+      FQ=FQ+CONS                                                                
+      WRITE(NOS,100) I,FQ                                                       
+  100 FORMAT( 2X,6HGROUPE,I2,3H - F7.3)                                         
+    7 CONTINUE                                                                  
+      IF(NTEST.EQ.0) GOTO 11                                                    
+      WRITE(NOS,17)                                                             
+   17 FORMAT(//60(1H*)//)                                                       
+      WRITE(NOS,18)                                                             
+   18 FORMAT(//20X,59HAFFECTATION ET VALEUR DE LA FONCTION LINEAIRE DISC        
+     1RIMINANTE/29X,40HPOUR LES INDIVIDUS DE L ECHANTILLON TEST//)              
+      IB=JL(1)                                                                  
+      ND=0                                                                      
+      DO 21 I=1,2                                                               
+      WRITE(NOS,28) I                                                           
+   28 FORMAT(//3X,6HGROUPE,I2,4X,11HAFFECTATION,5X,8HFONCTION//)                
+      NIN=1                                                                     
+      NP=ND+1                                                                   
+      ND=NP+NPGTE(I)-1                                                          
+      DO 25 J=NP,ND                                                             
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 26 M=1,NRET                                                            
+      L1=NVAR(K)                                                                
+      FQ=FQ+COF(M)*XTE(J,L1)                                                    
+      K=K-1                                                                     
+   26 CONTINUE                                                                  
+      FQ=FQ+CONS                                                                
+      IA=BL                                                                     
+      IF(FQ.GT.0.0) IA=JL(1)                                                    
+      IF(FQ.LT.0.0) IA=JL(2)                                                    
+      IF(IA.EQ.IB) GOTO 30                                                      
+      WRITE(NOS,4) NIN,IA,FQ                                                    
+      GOTO 27                                                                   
+   30 WRITE(NOS,5) NIN,IA,FQ                                                    
+   27 NIN=NIN+1                                                                 
+   25 CONTINUE                                                                  
+      IB=JL(2)                                                                  
+   21 CONTINUE                                                                  
+   11 IF(NA.EQ.0) GOTO 12                                                       
+      WRITE(NOS,13)                                                             
+   13 FORMAT(//60(1H*)//20X,59HAFFECTATION ET VALEUR DE LA FONCTION LINE        
+     1AIRE DISCRIMINANTE/36X,27HPOUR LES INDIVIDUS ANONYMES///4X,6HNUMER        
+     20,5X,11HAFFECTATION,5X,8HFONCTION//)                                      
+      DO 14 I=1,NA                                                              
+      K=NV                                                                      
+      FQ=0.0                                                                    
+      DO 15 M=1,NRET                                                            
+      L1=NVAR(K)                                                                
+      FQ=FQ+COF(M)*XNA(I,L1)                                                    
+      K=K-1                                                                     
+   15 CONTINUE                                                                  
+      FQ=FQ+CONS                                                                
+      IA=BL                                                                     
+      IF(FQ.GT.0.0) IA=JL(1)                                                    
+      IF(FQ.LT.0.0) IA=JL(2)                                                    
+      IF(IA.EQ.IB) GOTO 16                                                      
+      WRITE(NOS,4) I,IA,FQ                                                      
+      GOTO 14                                                                   
+   16 WRITE(NOS,5) I,IA,FQ                                                      
+   14 CONTINUE                                                                  
+   12 RETURN                                                                    
+      END                                                                       
+C  *********************************************************
+C  *                                                       *
+C  *   MLCOV : AJUSTEMENT DES M-C SUR LE MODELE LINEAIRE   *
+C  *                                                       *
+C  *********************************************************
+      SUBROUTINE MLCOV(LDIM,LTOT,ICARD,W,XMOY,A,SA,SCE,S2,R2,IFLAG)
+      DIMENSION W(LDIM,LDIM),XMOY(LDIM),A(LDIM),SA(LDIM)                        
+      LCARD=LTOT-1                                                              
+      YMOY=XMOY(LTOT)                                                           
+      VY=W(LTOT,LTOT)
+      CALL INVER (W,LCARD,LDIM,IFLAG)
+      DO 20 L=1,LCARD                                                           
+      A(L)=0.                                                                   
+      DO 10 K=1,LCARD                                                           
+      VYXK=W(LTOT,K)                                                            
+10    A(L)=A(L)+W(L,K)*VYXK                                                     
+	IF (A(L).EQ.0.0) IFLAG=2
+20    CONTINUE                                                                  
+      A(LTOT)=YMOY                                                              
+      DO 30 L=1,LCARD                                                           
+30    A(LTOT)=A(LTOT)-A(L)*XMOY(L)                                              
+      R2=0.                                                                     
+      DO 40 L=1,LCARD                                                           
+      VYXK=W(LTOT,L)                                                            
+40    R2=R2+A(L)*VYXK                                                           
+      R2=ABS(R2/VY)
+      SCE=ICARD*VY*(1.-R2)
+      S2=VY*(1.-R2)/FLOAT(ICARD-LTOT)
+      S2=ABS(S2)
+      DO 50 L=1,LCARD                                                           
+      SA(L)=SQRT(ABS(S2*W(L,L)))
+50    CONTINUE
+      SLK=0.                                                                    
+      DO 70 L=1,LCARD                                                           
+      SK=0.                                                                     
+      DO 60 K=1,LCARD                                                           
+60    SK=SK+XMOY(K)*W(K,L)                                                      
+      SLK=SLK+SK*XMOY(L)                                                        
+70    CONTINUE                                                                  
+      SA(LTOT)=SQRT(ABS(S2*(1.+SLK)))
+      S2=ICARD*S2                                                               
+      RETURN                                                                    
+      END                                                                       
+
+	FUNCTION MONO (I1,I2)
+	MONO = MIN0(I1,I2)+((MAX0(I1,I2)-1)*(MAX0(I1,I2)-2)/2)
+	RETURN
+	END
+      SUBROUTINE PERMX(IDIM,KDIM,ICARD,JCARD,X,ID,JD)
+      DIMENSION X(IDIM,KDIM),ID(IDIM),JD(KDIM)
+      DO 20 I=1,ICARD
+      IA=ID(I)
+10    IF (IA.LE.I) GOTO 20
+      IB=ID(IA)
+      ID(IA)=-IB
+      IA=IB
+      GOTO 10
+20    ID(I)=-ID(I)
+      IF (JD(1).LT.0) GOTO 50
+      DO 40 J=1,JCARD    
+      JA=JD(J)
+30    IF (JA.LE.J) GOTO 40
+      JB=JD(JA)
+      JD(JA)=-JB
+      JA=JB
+      GOTO 30
+40    JD(J)=-JD(J)
+50    CONTINUE
+      DO 110 I=1,ICARD
+      IA=-ID(I)
+      IF (IA.LT.0) GOTO 110
+      M=0
+60    IA=ID(IA)
+      M=M+1
+      IF (IA.GT.0) GOTO 60
+      IA=I
+      DO 100 J=1,JCARD
+      IF (JD(J).GT.0) GOTO 100
+      JB=J
+      K=M
+70    JA=JB
+      XA=X(IA,JA)
+80    IA=IABS(ID(IA))
+      JA=IABS(JD(JA))
+      XB=X(IA,JA)
+      X(IA,JA)=XA
+      XA=XB
+      IF (JA.NE.JB) GOTO 80
+      K=K-1
+      IF (IA.NE.I) GOTO 80
+      JB=IABS(JD(JB))
+90    IF (K.NE.0) GOTO 70
+100   CONTINUE
+110   CONTINUE
+      DO 120 I=1,ICARD
+120   ID(I)=IABS(ID(I))
+      IF (JD(1).GT.0) RETURN
+      DO 130 J=1,JCARD
+130   JD(J)=IABS(JD(J))
+      RETURN
+      END
+	FUNCTION PINLG(P)
+	Q=P
+	IF (P.GT.0.5) Q=1.-P
+	X=SQRT(ALOG(1./(Q*Q)))
+	PINLG=X-(2.30753+0.27061*X)/(1.0+0.99229*X+0.04481*X*X)
+	IF (P.GT.0.5) PINLG=-PINLG
+	RETURN
+	END
+	FUNCTION POISS (PARAM)
+	POISS = 0.0
+	Q = EXP(-PARAM)
+	R = 1.0
+10	U = SEN3A (BIDON)
+	R = R*U
+	IF (R.LT.Q) RETURN
+	POISS = POISS + 1.
+	GOTO 10
+	END
+      SUBROUTINE POUSS(MDIM,NDIM,KDIM,NTOT,KTOT,N,K,KODI,KODJ,F,
+     1                 IDI,IDJ,ID)
+      DIMENSION F(NDIM,KDIM),IDI(NDIM),IDJ(KDIM),KODI(NDIM),KODJ(KDIM)
+      DIMENSION ID(MDIM)
+      IF (NTOT.EQ.N) GOTO 40
+      IA=0
+      IS=N
+      DO 20 I=1,NTOT
+      IF (KODI(I).NE.1) GOTO 10
+      IA=IA+1
+      KODI(I)=IA
+      ID(IA)=IDI(I)
+      GOTO 20
+10    IS=IS+1
+      KODI(I)=IS
+      ID(IS)=IDI(I)
+20    CONTINUE
+      DO 30 I=1,NTOT
+30    IDI(I)=ID(I)
+40    IF (KTOT.EQ.K) GOTO 80
+      JA=0
+      JS=K
+      DO 60 J=1,KTOT
+      IF (KODJ(J).NE.1) GOTO 50
+      JA=JA+1
+      KODJ(J)=JA
+      ID(JA)=IDJ(J)
+      GOTO 60
+50    JS=JS+1
+      KODJ(J)=JS
+      ID(JS)=IDJ(J)
+60    CONTINUE
+      DO 70 J=1,KTOT
+70    IDJ(J)=ID(J)
+80    CALL PERMX(NDIM,KDIM,NTOT,KTOT,F,KODI,KODJ)
+      RETURN
+      END
+C   *******************************************************************
+C   *                                                                 *
+C   *  PREDE: PREDEPLOIEMENT=CALCUL DU VECTEUR LCUM DES DDL CUMULES   *
+C   *                                                                 *
+C   *******************************************************************
+      SUBROUTINE PREDE(NQDIM,KDIM,NQDEB,NVAR,KCARD,NMOD,KROIS,                  
+     1        NQFIN,LCUM)                                                       
+      COMMON /ENSOR/LEC,IMP                                                     
+      DIMENSION NMOD(NQDIM),KROIS(3,KDIM),LCUM(NQDIM)                           
+      NQFIN=1                                                                   
+      LCUM(NQFIN)=0                                                             
+      IF (NQDEB.LE.0) GOTO 20                                                   
+      DO 10 J=1,NQDEB                                                           
+      LCUM(NQFIN+1)=LCUM(NQFIN)+NMOD(NQFIN)-1                                   
+      I1=LCUM(NQFIN)+1                                                          
+      I2=LCUM(NQFIN+1)                                                          
+      WRITE(IMP,100) J,(I,I=I1,I2)                                              
+10    NQFIN=NQFIN+1                                                             
+20    CONTINUE                                                                  
+      IF (NVAR.LE.0) GOTO 40                                                    
+      DO 30 J=1,NVAR                                                            
+      LCUM(NQFIN+1)=LCUM(NQFIN)+1                                               
+      I1=LCUM(NQFIN)+1                                                          
+      I2=LCUM(NQFIN+1)                                                          
+      WRITE(IMP,200) J,(I,I=I1,I2)                                              
+30    NQFIN=NQFIN+1                                                             
+40    CONTINUE                                                                  
+      IF (KCARD.LE.0) GOTO 70                                                   
+      DO 60 K=1,KCARD                                                           
+      K1=KROIS(1,K)                                                             
+      K2=KROIS(2,K)                                                             
+      K3=KROIS(3,K)                                                             
+      L1=LCUM(K1+1)-LCUM(K1)                                                    
+      L2=LCUM(K2+1)-LCUM(K2)                                                    
+      L3=1                                                                      
+      IF (K3.LE.0) GOTO 50                                                      
+      L3=LCUM(K3+1)-LCUM(K3)                                                    
+50    LCUM(NQFIN+1)=LCUM(NQFIN)+L1*L2*L3                                        
+      I1=LCUM(NQFIN)+1                                                          
+      I2=LCUM(NQFIN+1)                                                          
+      WRITE(IMP,300) K,(I,I=I1,I2)                                              
+60    NQFIN=NQFIN+1                                                             
+100   FORMAT(1H0,11HCRITERE    ,I4,5X,20HCOEFFICIENTS NUMEROS,20I4)             
+200   FORMAT(1H0,11HVARIABLE   ,I4,5X,20HCOEFFICIENTS NUMEROS,20I4)             
+300   FORMAT(1H0,11HINTERACTION,I4,5X,20HCOEFFICIENTS NUMEROS,20I4)             
+70    RETURN                                                                    
+      END                                                                       
+
+C  ****************************************************
+C  *                                                  *
+C  *   PREMC: PREPARATION POUR L'AJUSTEMENT DES M-C   *
+C  *                                                  *
+C  ****************************************************	   
+      SUBROUTINE PREMC(NQDIM,KDIM,LDIM,NQDEB,KCARD,NVAR,ICARD,                  
+     1       LCARD,LTOT,NMOD,KROIS,LCUM,D,X,XMOY,W,FMT,KODE)  
+      COMMON /ENSOR/LEC,IMP                                                     
+      DIMENSION NMOD(NQDIM),LCUM(NQDIM),D(NQDIM),KROIS(3,KDIM)                  
+      DIMENSION X(LDIM),W(LDIM,LDIM),XMOY(LDIM),FMT(20)
+      CALL PREDE(NQDIM,KDIM,NQDEB,NVAR,KCARD,NMOD,KROIS,NQFIN,LCUM)             
+      IF (KODE.NE.0) WRITE(IMP,100)                                             
+      PI=1.0                                                                    
+      MODE=0                                                                    
+      NQTOT=NQDEB+NVAR+1                                                        
+      DO 10 I=1,ICARD                                                           
+      CALL DONNI(NQDIM,NQTOT,D,FMT)                                                 
+      IF (KODE.NE.0) WRITE(IMP,1000) (D(L),L=1,NQTOT)                           
+      CALL DPLOI(NQDIM,LDIM,KDIM,NQDEB,NVAR,KCARD,LCARD,LTOT,                   
+     1          KROIS,LCUM,D,X)                                                 
+      CALL COMAJ(MODE,LDIM,LTOT,W,XMOY,X,PI,SOMP,KOMPT)                         
+10    CONTINUE                                                                  
+      DO 30 L=1,LTOT                                                            
+      DO 20 K=1,LTOT                                                            
+20    W(K,L)=W(K,L)/SOMP                                                        
+30    CONTINUE                                                                  
+100   FORMAT(///1H ,19HTABLEAU DES DONNEES ,///)                                
+1000  FORMAT(1H ,12(F9.2,1X))                                                  
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE QUANT(ICARD,V,QT,NB,KV)                                        
+      DIMENSION V(ICARD),KV(ICARD),QT(NB)                                       
+      CALL SHELK(ICARD,V,KV)                                                    
+      NCLAS=NB+1                                                                
+      DO 10 K=1,NB                                                              
+      I1=0.9999+FLOAT(K*ICARD)/NCLAS                                            
+      I2=1.0000+FLOAT(K*ICARD)/NCLAS                                            
+      QT(K)=(V(I1)+V(I2))/2.0                                                   
+10    CONTINUE                                                                  
+      RETURN                                                                    
+      END
+      SUBROUTINE RECOD(IDIM,ICARD,NV,X,MODEX,NCLAS,BX,NV3,V1,V2,KV)             
+      DIMENSION X(IDIM,NV),MODEX(NV),NCLAS(NV),BX(50,NV3)                       
+      DIMENSION V1(ICARD),V2(ICARD),KV(ICARD),QT(51)                            
+      I3=0                                                                      
+      DO 80 J=1,NV                                                              
+      MD=MODEX(J)                                                               
+      IF (MD.EQ.0) GOTO 80                                                      
+      DO 10 I=1,ICARD                                                           
+10    V1(I)=X(I,J)                                                              
+      NC=NCLAS(J)                                                               
+      NB=NC-1                                                                   
+      IF (MD.EQ.1) GOTO 20                                                      
+      IF (MD.EQ.2) GOTO 30                                                      
+      IF (MD.EQ.3) GOTO 40                                                      
+20    CALL EFEGO(ICARD,V1,QT,NC,V2,KV)                                          
+      GOTO 60                                                                   
+30    CALL AMPEG(ICARD,V1,NC)                                                   
+      GOTO 60                                                                   
+40    I3=I3+1                                                                   
+      DO 50 I=1,NB                                                              
+50    QT(I)=BX(I,I3)                                                            
+      CALL BOFIX(ICARD,V1,QT,NB)                                                
+60    DO 70 I=1,ICARD                                                           
+70    X(I,J)=V1(I)                                                              
+80    CONTINUE                                                                  
+      RETURN                                                                    
+      END
+C  **********************************************
+C  *                                            *
+C  *    PROGRAMME D'ANALYSE DE LA COVARIANCE    *
+C  *                                            *  
+C  *    REGMC: AJUST. DES MOINDRES CARRES       *
+C  *                                            *    	
+C  ********************************************** 
+      PARAMETER (NQDIM=25,KDIM=8,LDIM=100)
+      COMMON /ENSOR/LEC,IMP 
+      DIMENSION NMOD(NQDIM),LCUM(NQDIM),D(NQDIM),KROIS(3,KDIM),FMT(20)
+      DIMENSION X(LDIM),W(LDIM,LDIM),XMOY(LDIM),A(LDIM),SA(LDIM)
+      DIMENSION TEXTE(10)                                                       
+      LEC=5                                                                     
+      IMP=6                                                                     
+      READ(LEC,107) KODE                                                      
+      READ(LEC,108) TEXTE                                                       
+      WRITE(IMP,1002) TEXTE                                                     
+      READ(LEC,1000) ICARD,NQDEB,NVAR,ITA2,ITA3                                 
+      WRITE(IMP,1100) ICARD,NQDEB,NVAR,ITA2,ITA3                                
+      KCARD=ITA2+ITA3                                                           
+      IF (NQDEB.LE.0) GOTO 10                                                   
+      READ(LEC,1000) (NMOD(LQ),LQ=1,NQDEB)                                      
+      WRITE(IMP,1200)(NMOD(LQ),LQ=1,NQDEB)                                      
+10    IF (KCARD.LE.0) GOTO 30                                                   
+      DO 20 K=1,KCARD                                                           
+      READ(LEC,1000)  (KROIS(II,K),II=1,3)                                      
+      WRITE(IMP,1300) (KROIS(II,K),II=1,3)                                      
+20    CONTINUE                                                                  
+30    CONTINUE                                                                  
+      READ(LEC,1400)  (FMT(J),J=1,20)                                           
+      WRITE(IMP,1500) (FMT(J),J=1,20)                                           
+      CALL PREMC(NQDIM,KDIM,LDIM,NQDEB,KCARD,NVAR,ICARD,                        
+     1      LCARD,LTOT,NMOD,KROIS,LCUM,D,X,XMOY,W,FMT,N,KODE)
+      CALL MLCOV(LDIM,LTOT,ICARD,W,XMOY,A,SA,SCE,S2,R2,IFLAG)
+      WRITE(IMP,2000)                                                           
+      CALL EDITR(LDIM,LTOT,ICARD,W,XMOY,A,SA,SCE,S2,R2,LCUM,NQDIM,NQDEB)        
+      IF (NQDEB.LE.0) GOTO 40                                                   
+      WRITE(IMP,2000)                                                           
+      CALL AVAR2(LDIM,NQDIM,KDIM,ICARD,NQDEB,NVAR,ITA2,ITA3,LTOT,               
+     1       KCARD,KROIS,W,A,LCUM)                                              
+40    CONTINUE
+      WRITE(IMP,2000)
+107   FORMAT(I2)                                                               
+108   FORMAT(20A4)
+1000  FORMAT(20I4)                                                              
+1002  FORMAT(1H1/1H0,130(1H-)/1H ,40X,20A4/1H ,130(1H-)/1H0)
+1100  FORMAT(1H0,7HICARD= ,I6,10X,7HNQDEB= ,I6,10X,7HNVAR=  ,I6,                
+     1      10X,7HITA2=  ,I6,10X,7HITA3=  ,I6/)                                 
+1200  FORMAT(1H0,9HNMOD(*)= ,20I5)                                              
+1300  FORMAT(1H0,12HKROIS(*,*)=    ,3I5)                                        
+1400  FORMAT(20A4)                                                              
+1500  FORMAT(1H0,5HFMT= ,20A4/)                                                 
+2000  FORMAT(1H1)                                                               
+      STOP                                                                      
+      END                                                                       
+	SUBROUTINE RETIR (N,IDN,K,IDK)
+	DIMENSION IDN(N),IDK(K)
+	DO 10 J=1,N
+10	IDN(J)=J
+	KFIN=K
+	IF (K.GT.N) KFIN=N
+	DO 30 L=1,KFIN
+	X=N-L+1
+	I=X*SEN3A(BIDON)+1.0
+	IDK(L)=IDN(I)
+	IF (I.EQ.N) GOTO 30
+	N1=N-L
+	IF (N1.LE.0) GOTO 30
+	DO 20 J=I,N1
+20	IDN(J)=IDN(J+1)
+30	CONTINUE
+	RETURN
+	END
+C  **********************************
+C  *                                * 
+C  *   LOIS STATISTIQUES USUELLES   *
+C  *                                *
+C  ********************************** 
+      FUNCTION RNKSF(MODE,X,N1,N2)                                              
+      DIMENSION H(5)                                                            
+      DATA H(1)/0.319382/H(2)/-0.356564/H(3)/1.781478/                          
+     1 H(4)/-1.821256/H(5)/1.330274/                                            
+      FN1=N1
+      FN2=N2
+      IF (ABS(X).LT.0.0000001) GOTO 100                                         
+      GOTO (10,20,30,40) , MODE                                                 
+10    Z=X                                                                       
+      GOTO 80                                                                   
+20    FISH=X/FN1                                                                
+      FN2=1.0 E10                                                               
+      GOTO 50                                                                   
+30    FISH=X*X                                                                  
+      FN2=FN1                                                                   
+      FN1=1.0                                                                   
+      GOTO 50                                                                   
+40    FISH=X                                                                    
+50    F=FISH                                                                    
+      IF (FISH.GE.1.0) GOTO 60                                                  
+      F=1.0/FISH                                                                
+      PIV=FN1                                                                   
+      FN1=FN2                                                                   
+      FN2=PIV                                                                   
+60    A1=2.0/(9.*FN1)                                                           
+      A2=2.0/(9.*FN2)                                                           
+      Z=(1.0-A2)*(F**0.33333333)-(1.0-A1)                                       
+      Z=Z/SQRT(ABS(A1+A2*F**0.666667))
+      IF (FN2.LE.3.) Z=Z*(1.+0.08*(Z**4)/FN2**3)                                
+      IF (ABS(Z).LE.6.0) GOTO 80                                                
+      IF (Z.GT.6.) GOTO 70                                                      
+      RNKSF=0.                                                                  
+      RETURN                                                                    
+70    RNKSF=1.                                                                  
+      RETURN                                                                    
+80    Y=EXP(-Z*Z/2.)*0.39894228                                                 
+      Q=1./(1.+0.2316419*ABS(Z))                                                
+      SOM=0.0                                                                   
+      DO 90 I=1,5                                                               
+90    SOM=SOM+H(I)*Q**I                                                         
+      RNKSF=0.5+SIGN(1.,Z)*(0.5-Y*SOM)                                          
+      IF (MODE.EQ.1) RETURN                                                     
+      IF (FISH.LT.1.) RNKSF=1.-RNKSF                                            
+      IF (MODE.NE.3) RETURN                                                     
+      RNKSF=RNKSF+0.5*(1.-RNKSF)                                                
+      IF (X.LE.0.0) RNKSF=1.0-RNKSF                                             
+      RETURN                                                                    
+100   GOTO (110,120,110,120) , MODE                                             
+110   RNKSF=0.5                                                                 
+      RETURN                                                                    
+120   RNKSF=0.0                                                                 
+      RETURN                                                                    
+      END
+
+      INTEGER COMPT,COMPT1,GROUPE,ECHAN,DICHOE,DECOU,DECGRO                     
+      INTEGER ARRET,OR,ORIGIN,PRT                                               
+      INTEGER CL(10),VECTRA(100)                                                
+      LOGICAL TEST(100)                                                         
+      COMMON /POP/ECHAN(1500,10),NFACT                                          
+      COMMON /DICHO/N1,MEILD1,IETOIL,PHI2,DICHOE(10)                            
+      COMMON /ARRETD/ARRET(100),ORIGIN(100,10),OR(100),IS(100)                  
+      COMMON /DECOUP/DECGRO(100),NM(10,100),NMAX(10,100)                         
+      COMMON /DECDEC/DECOU(100)                                                 
+      COMMON /LILI/LIAIS(10,15)                                                 
+      COMMON /CARAC/NCAR(10)                                                     
+      COMMON /ENSOR/LEC,PRT                                                     
+      DATA NPOP,COMPT/0,2/                                                      
+      DATA CMG/0./CL/10*0/                                                      
+      DATA TEST/100*.FALSE./                                                    
+      LEC=5
+      PRT=6
+      READ(LEC,100) IUNIT,MINPOP,NFACT,IOP                                      
+      READ(LEC,101) (NCAR(I),I=1,NFACT)                                         
+      MAX=NCAR(1)                                                               
+      DO 1 I=2,NFACT                                                            
+      IF(NCAR(I).GT.MAX) MAX=NCAR(I)                                            
+1     CONTINUE                                                                  
+98    NPOP=NPOP+1                                                               
+      READ(IUNIT,101,END=99) (ECHAN(NPOP,I),I=1,NFACT)                          
+      GOTO 98                                                                   
+99    MAXIY=NCAR(NFACT)                                                         
+      NPOP=NPOP-1                                                               
+      CALL INIT (MINPOP,NPOP,IOP)                                               
+      DO 9 I=1,NPOP                                                             
+9     CMG=CMG+ECHAN(I,NFACT)                                                    
+      CMG=CMG/NPOP                                                              
+      CALL ENTETE(NPOP,1,1,CMG)                                                 
+      VECTRA(1)=0                                                               
+      DECOU(1)=0                                                                
+      DECOU(2)=NPOP                                                             
+      NM(1,1)=1                                                                 
+      NMAX(1,1)=NPOP                                                            
+      DECGRO(1)=1                                                               
+      NF=NFACT-1                                                                
+      NIVEAU=2                                                                  
+50    COMPT1=COMPT-1                                                            
+      GROUPE=0                                                                  
+      ICOMPT=1                                                                  
+      IZ=2**(NIVEAU-2)-1                                                        
+      DO 10 I=1,COMPT1                                                          
+      IG=IZ+I                                                                   
+      GROUPE=GROUPE+1                                                           
+      IF(TEST(I+1)) GOTO 5                                                      
+      CALL DICHOP(MINPOP,ARRET(I+1),MAXIY,CL,I,KODE)                            
+      IF (KODE.EQ.1) GOTO 15                                                    
+      ICOMPT=ICOMPT+2                                                           
+      VECTRA(ICOMPT-1)=N1                                                       
+      VECTRA(ICOMPT)=DECOU(I+1)                                                 
+      NM(NIVEAU,GROUPE)=DECOU(I)+1                                              
+      NMAX(NIVEAU,GROUPE)=N1                                                    
+      NM(NIVEAU,GROUPE+1)=N1+1                                                  
+      NMAX(NIVEAU,GROUPE+1)=DECOU(I+1)                                          
+      DECGRO(NIVEAU)=GROUPE+1                                                   
+      IF(NIVEAU.GT.5) GOTO 25                                                   
+      DO 52 JK=1,NF                                                             
+52    LIAIS(JK,IG)=CL(JK)                                                       
+25    CONTINUE                                                                  
+      CALL IMP(NIVEAU,GROUPE,I)                                                 
+      GOTO 10                                                                   
+15    TEST(I+1)=.TRUE.                                                          
+      DO 40 J=1,MEILD1                                                          
+      ORIGIN (I+1,J)=DICHOE (J)                                                 
+40    CONTINUE                                                                  
+      OR(I+1)=MEILD1                                                            
+      IS (I+1)=IETOIL                                                           
+5     II=I+1                                                                    
+      ICOMPT=ICOMPT+1                                                           
+      VECTRA(ICOMPT)=DECOU(II)                                                  
+      CALL IMPARR (NIVEAU,GROUPE,II)                                            
+10    CONTINUE                                                                  
+      IF(ICOMPT.EQ.COMPT) GOTO 30                                               
+      COMPT=ICOMPT                                                              
+      WRITE(PRT,3000)                                                           
+      WRITE(PRT,1000)                                                           
+      WRITE(PRT,3000)                                                           
+      NIVEAU=NIVEAU+1                                                           
+      DO 20 I=1,COMPT                                                           
+20    DECOU(I)=VECTRA(I)                                                        
+      GOTO 50                                                                   
+30    WRITE(PRT,3000)                                                           
+      WRITE(PRT,1000)                                                           
+      CALL DECPOP(NPOP,COMPT)                                                   
+      IF (IOP.NE.2.AND.IOP.NE.3) GOTO 70                                        
+      CALL IMPPOP(COMPT)                                                        
+70    CONTINUE                                                                  
+      CALL REPART(NIVEAU,MAX)                                                   
+      CALL IMPLIA (NF)                                                          
+      STOP                                                                      
+100   FORMAT(40I2)                                                              
+101   FORMAT(10I1)                                                              
+1000  FORMAT(1H ,3X,127(1H*))                                                   
+3000  FORMAT(1H ,3X,2('*',8X),'*',19X,'*',12X,'*',44X,'*',2(14X,'*'))           
+      END                                                                       
+
+      SUBROUTINE INIT(MP,N,IOP)                                                 
+      INTEGER EC                                                                
+      DIMENSION STAR(132),BLANC(132),ENTIER(9)                                  
+      COMMON /POP/EC(1500,10),NF                                                
+      COMMON/CARAC/NCAR(10)                                                     
+      COMMON /ENSOR/LEC,IMP                                                     
+      DATA STAR/132*'*'/YGREC/'Y'/ENTIER/'1','2','3','4','5','6','7','8'        
+     *,'9'/                                                                     
+      DATA BLANC/132*' '/                                                       
+      DATA BL/' '/                                                              
+      WRITE(IMP,100)                                                            
+      NNF=NF-1                                                                  
+      WRITE(IMP,200) NNF                                                        
+      WRITE(IMP,300)                                                            
+      NSTAR=13*NNF+1                                                            
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      NA=NNF-1                                                                  
+      WRITE(IMP,500) (ENTIER(I),I=1,NA)                                         
+      BLANC(NNF)=ENTIER(NNF)                                                    
+      WRITE(IMP,901) (BLANC(I),I=1,NNF)                                         
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      WRITE(IMP,600) (NCAR(I),I=1,NNF)                                          
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      IF (IOP.NE.1.AND.IOP.NE.3) GOTO 10                                        
+      WRITE(IMP,700)                                                            
+      NSTAR=NSTAR+13                                                            
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      WRITE(IMP,500) (ENTIER(I),I=1,NNF)                                        
+      BLANC(NF)=YGREC                                                           
+      WRITE(IMP,901) (BLANC(I),I=1,NF)                                          
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      BLANC(NNF)=BL                                                             
+      BLANC(NF)=BL                                                              
+      DO 1 I=1,N                                                                
+      WRITE(IMP,900) (BLANC(J),J=1,NF)                                          
+      WRITE(IMP,600) (EC(I,J),J=1,NF)                                           
+1     CONTINUE                                                                  
+      WRITE(IMP,900) (BLANC(I),I=1,NF)                                          
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+10    CONTINUE                                                                  
+      WRITE(IMP,750) N                                                          
+      WRITE(IMP,800) MP                                                         
+      WRITE(IMP,1000)                                                           
+      WRITE(IMP,4000)                                                           
+      WRITE(IMP,5000)                                                           
+      RETURN                                                                    
+100   FORMAT(1H1,50X,33(1H*)/1H ,50X,'I',31X,'I'/1H ,50X,'I SEGMENTATION        
+     * D''UNE POPULATION I'/1H ,50X,'I',31X,'I'/1H ,50X,33(1H*)////)            
+200   FORMAT(1H0,'NOMBRE DE FACTEURS= ',I2//)                                   
+300   FORMAT(1H0,50X,'CARACTERISTIQUES DES FACTEURS'/1H ,50X,29(1H-)//)         
+400   FORMAT(1H ,132A1)                                                         
+500   FORMAT(1H ,'I',10(' FACTEUR  ',A1,' I'))                                  
+600   FORMAT(1H ,'I',10(5X,I2,5X,'I'))                                          
+700   FORMAT(////1H ,56X,'POPULATION DE DEPART'/1H ,56X,20(1H-)//)              
+750   FORMAT(1H0/1H ,'POPULATION TOTALE=',I4)                                   
+800   FORMAT(1H0,'POPULATION MINIMALE= ',I2)                                    
+900   FORMAT(1H ,'I',10(10X,A1,' I'))                                           
+901   FORMAT(1H+,1X,10(10X,A1,' I'))                                            
+1000  FORMAT(1H0,'FACTEUR Y=CRITERE A ETUDIER')                                 
+4000  FORMAT(1H0/1H0,50X,'CRITERES D''ARRET'/1H ,50X,16(1H-)/1H0/1H ,'AR        
+     *RET NUMERO 1 ---> POPULATION INFERIEURE A LA POPULATION MINIMALE'/        
+     *1H ,'ARRET NUMERO 2 ---> PHI2 NUL')                                       
+5000  FORMAT(1H ,'ARRET NUMERO 3 ---> MAXPHI ATTEINT PLUSIEURS FOIS')           
+      END                                                                       
+
+      SUBROUTINE ENTETE(NPOP,NIV,GRO,C)                                         
+      INTEGER GRO                                                               
+      COMMON /ENSOR/LEC,IMP                                                     
+      WRITE(IMP,1000)                                                           
+      WRITE(IMP,1)                                                              
+      WRITE(IMP,2)                                                              
+      WRITE(IMP,3)                                                              
+      WRITE(IMP,2)                                                              
+      WRITE(IMP,1)                                                              
+      WRITE(IMP,2)                                                              
+      WRITE(IMP,10) NIV,GRO,NPOP,C                                              
+      WRITE(IMP,2)                                                              
+      WRITE(IMP,1)                                                              
+      WRITE(IMP,2)                                                              
+      RETURN                                                                    
+1     FORMAT(1H ,3X,127(1H*))                                                   
+2     FORMAT(1H ,3X,2('*',8X),'*',19X,'*',12X,'*',44X,'*',2(14X,'*'))           
+3     FORMAT(1H ,3X,'* NIVEAU * GROUPE *',5X,'POPULATION',4X,'*',3X,'FAC        
+     *TEUR',2X,'*',17X,'DICHOTOMIE',17X,'*',5X,'PHI2',5X,'*',3X,'CRIT MO        
+     *Y',3X,'*')                                                                
+10    FORMAT(1H ,3X,2('*   ',I2,3X),'*',7X,I4,8X,'*',12X,'*',44X,'*',14X        
+     *,'*',2X,F10.6,2X,'*')                                                     
+1000  FORMAT(1H1)                                                               
+      END                                                                       
+
+      SUBROUTINE DICHOP (MINPOP,ARRET,MAXIY,CL,IJK,KODE)                        
+      LOGICAL STOP                                                              
+      REAL MAXPHI                                                               
+      INTEGER ECHAN,ARRET,DICHOE,DECOU,RANG(10),BIT(10),S(10),CL(10)            
+      DIMENSION PH(10),MEILD(10),M(10)                                          
+      COMMON /POP/ECHAN(1500,10),NFACT                                          
+      COMMON /TRAV/MATTRA(1500,10),NI1,NIP                                      
+      COMMON /DICHO/NU,MEILN1,IETOIL,PHI2,DICHOE(10)                            
+      COMMON /DECDEC/DECOU(100)                                                 
+      COMMON/CARAC/NCAR(10)                                                     
+      KODE=0                                                                    
+      NI=DECOU(IJK)                                                             
+      NIP=DECOU(IJK+1)                                                          
+      STOP=.FALSE.                                                              
+      PHI2=0.                                                                   
+      NI1=NI+1                                                                  
+      DO 1 I=1,MAXIY                                                            
+1     M(I)=0                                                                    
+      DO 2 I=NI1,NIP                                                            
+      IVY=ECHAN(I,NFACT)                                                        
+2     M(IVY)=M(IVY)+1                                                           
+      NF=NFACT-1                                                                
+      DO 10 I=1,NF                                                              
+      NNCAR=NCAR(I)-1                                                           
+      NDICHO=2**NNCAR-1                                                         
+      MAXPHI=0                                                                  
+      DO 15 J=1,NNCAR                                                           
+15    BIT(J)=0                                                                  
+      DO 11 NN=1,NDICHO                                                         
+      DO 12 IY=1,MAXIY                                                          
+12    S(IY)=0                                                                   
+      N=0                                                                       
+      NOMBRE=0                                                                  
+      L=0                                                                       
+3     L=L+1                                                                     
+      BIT(L)=BIT(L)+1                                                           
+      IF(BIT(L).EQ.1) GOTO 4                                                    
+      BIT(L)=0                                                                  
+      GOTO 3                                                                    
+4     CONTINUE                                                                  
+      DO 13 L=1,NNCAR                                                           
+      IF(BIT(L).NE.1) GOTO 13                                                   
+      NOMBRE=NOMBRE+1                                                           
+      RANG(NOMBRE)=L                                                            
+13    CONTINUE                                                                  
+      DO 20 K=1,NOMBRE                                                          
+      DO 21 J=NI1,NIP                                                           
+      IF (ECHAN(J,I).NE.RANG(K)) GOTO 21                                        
+      IY=ECHAN(J,NFACT)                                                         
+      S(IY)=S(IY)+1                                                             
+      N=N+1                                                                     
+21    CONTINUE                                                                  
+20    CONTINUE                                                                  
+      NP=NIP-NI                                                                 
+      IF(N.EQ.0.OR.NP.EQ.N) GOTO 11                                             
+      PHID=0.                                                                   
+      DO 30 J=1,MAXIY                                                           
+      IF(M(J).EQ.0) GOTO 30                                                     
+      PHID=PHID+(NP*S(J)-N*M(J))**2/FLOAT(M(J))                                 
+30    CONTINUE                                                                  
+      PHID=PHID/(NP*N*(NP-N))                                                   
+      IF (PHID.LT.MAXPHI) GOTO 11                                               
+      MAXPHI=PHID                                                               
+      NN1=N                                                                     
+      DO 16 L=1,NOMBRE                                                          
+16    MEILD(L)=RANG(L)                                                          
+      MEIL1=NOMBRE                                                              
+11    CONTINUE                                                                  
+      PH(I)=MAXPHI                                                              
+      IF(MAXPHI.LT.PHI2) GOTO 10                                                
+      IETOIL=I                                                                  
+      NU=NN1                                                                    
+      MEILN1=MEIL1                                                              
+      DO 17 L=1,MEILN1                                                          
+17    DICHOE(L)=MEILD(L)                                                        
+      PHI2=MAXPHI                                                               
+10    CONTINUE                                                                  
+      IF(PHI2.NE.0.) GOTO 98                                                    
+      ARRET=2                                                                   
+      GOTO 99                                                                   
+98    IF(NU.GE.MINPOP.AND.(NP-NU).GE.MINPOP) GOTO 97                            
+      ARRET=1                                                                   
+      GOTO 99                                                                   
+97    CALL TESTPH (PH,STOP,NF,ARRET)                                            
+      IF(STOP) GOTO 99                                                          
+      DO 18 I=NI1,NIP                                                           
+      DO 19 J=1,NFACT                                                           
+19    MATTRA(I,J)=ECHAN(I,J)                                                    
+18    CONTINUE                                                                  
+      CALL ORD (MEILN1,DICHOE,IETOIL)                                           
+      CALL TRI(PH,CL,NF)                                                        
+      NU=NU+NI                                                                  
+      RETURN                                                                    
+99    CONTINUE                                                                  
+      NU=NIP                                                                    
+      KODE=1                                                                    
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE IMPARR (N,G,II)                                                
+      INTEGER G,A                                                               
+      INTEGER ARRET,OR,ORIGIN                                                   
+      COMMON /ARRETD/ARRET(100),ORIGIN(100,10),OR(100),IS(100)                  
+      COMMON /ENSOR/LEC,IMP                                                     
+      A=ARRET(II)                                                               
+      M=OR(II)                                                                  
+      IE=IS(II)                                                                 
+      WRITE(IMP,1) N,G,IE,A,(ORIGIN(II,I),I=1,M)                                
+      WRITE(IMP,2)                                                              
+      G=G+1                                                                     
+      WRITE(IMP,1) N,G,IE,A,(ORIGIN(II,I),I=1,M)                                
+      WRITE(IMP,2)                                                              
+      RETURN                                                                    
+1     FORMAT(1H ,3X,2('*   ',I2,3X),'*',19X,'*',5X,I2,5X,'*',2X,'ARRET '        
+     *,I1,' D''ORIGINE ',10(I1,'-'))                                            
+2     FORMAT(1H+,99X,'*',2(14X,'*'))                                            
+      END                                                                       
+
+      SUBROUTINE IMPLIA(NF)                                                     
+      COMMON /LILI/LIAIS(10,15)                                                 
+      COMMON /ENSOR/LEC,IMP                                                     
+      WRITE(IMP,100)                                                            
+      WRITE(IMP,200) (N,N=1,4)                                                  
+      WRITE(IMP,300) (N,N=1,2),(N,N=1,4),(N,N=1,8)                              
+      DO 1 I=1,NF                                                               
+      WRITE(IMP,4000) I,(LIAIS(I,J),J=1,15)                                     
+      IF(I.EQ.NF) GOTO 1                                                        
+      WRITE(IMP,400)                                                            
+1     CONTINUE                                                                  
+      WRITE(IMP,500)                                                            
+      RETURN                                                                    
+100   FORMAT(1H1,25X,'ORDRE DES LIAISONS DES FACTEURS AVEC LE CRITERE Y         
+     *AU NIVEAU DES DIFFERENTS GROUPES'/1H ,25X,82(1H=)/1H ,52X,'(POUR L        
+     *ES 4 PREMIERS NIVEAUX)')                                                  
+200   FORMAT(////1H ,132(1H*)/1H ,3X,'NIVEAU',2X,'I',3X,I2,3X,'I',6X,I2,        
+     *7X,'I',14X,I2,15X,'I',30X,I2/1H ,132(1H*))                                
+300   FORMAT(1H ,3X,'GROUPE',2X,'I',4X,'1',3X,'I',3X,I1,7X,I1,3X,'I',3X,        
+     *I1,3(7X,I1),3X,'I',3X,I1,7(7X,I1)/1H ,132(1H*))                           
+400   FORMAT(1H ,11(1H*),'I',8(1H*),'I',15(1H*),'I',31(1H*),'I',63(1H*))        
+500   FORMAT(1H ,132(1H*))                                                      
+4000  FORMAT(1H ,'FACTEUR ',I2,' I',3X,I2,3X,'I',2X,I2,6X,I2,3X,'I',2X,I        
+     *2,3(6X,I2),3X,'I',2X,I2,7(6X,I2))                                         
+      END                                                                       
+
+      SUBROUTINE DECPOP(N,C)                                                    
+      INTEGER C,C0,DECOU                                                        
+      COMMON /DECDEC/DECOU(100)                                                 
+      COMMON /ENSOR/LEC,IMP                                                     
+      WRITE(IMP,100)                                                            
+      WRITE(IMP,1000)                                                           
+      WRITE(IMP,1001)                                                           
+      WRITE(IMP,2000)                                                           
+      WRITE(IMP,1001)                                                           
+      WRITE(IMP,1000)                                                           
+      C0=C-1                                                                    
+      DO 1 K=1,C0                                                               
+      N0=DECOU(K+1)-DECOU(K)                                                    
+      POURC=FLOAT(N0)/FLOAT(N)                                                  
+      WRITE(IMP,1001)                                                           
+      WRITE(IMP,3000) K,N0,POURC                                                
+1     CONTINUE                                                                  
+      WRITE(IMP,1001)                                                           
+      WRITE(IMP,1000)                                                           
+      WRITE(IMP,4000) N                                                         
+      RETURN                                                                    
+100   FORMAT(1H1,37X,'REPARTITION DE LA POPULATION DANS LES DIFFERENTS G        
+     *ROUPES'/1H ,37X,56(1H=)///)                                               
+1000  FORMAT(1H ,48X,35(1H*))                                                   
+1001  FORMAT(1H ,48X,'I',8X,'I',10X,'I',13X,'I')                                
+2000  FORMAT(1H ,48X,'I GROUPE I EFFECTIF I POURCENTAGE I')                     
+3000  FORMAT(1H ,48X,'I',3X,I2,3X,'I',3X,I4,3X,'I',2X,F10.6,' I')               
+4000  FORMAT(1H0/1H ,'POPULATION TOTALE=',I4)                                   
+      END                                                                       
+
+      SUBROUTINE TESTPH (PH,STOP,NF,ARRET)                                      
+      LOGICAL STOP                                                              
+      INTEGER ARRET                                                             
+      REAL MPH                                                                  
+      DIMENSION PH(10)                                                          
+      MPH=PH(1)                                                                 
+      K=1                                                                       
+      DO 1 I=2,NF                                                               
+      IF(PH(I).LE.MPH) GOTO 1                                                   
+      MPH=PH(I)                                                                 
+      K=I                                                                       
+1     CONTINUE                                                                  
+      DO 2 I=1,NF                                                               
+      IF(I.EQ.K.OR.PH(I).NE.MPH) GOTO 2                                         
+      STOP=.TRUE.                                                               
+      ARRET=3                                                                   
+      RETURN                                                                    
+2     CONTINUE                                                                  
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE TRI(A,M,N)                                                     
+      DIMENSION A(10),M(10)                                                     
+      DO 2 J=1,N                                                                
+2     M(J)=0                                                                    
+      J=0                                                                       
+      DO 5 K=1,N                                                                
+      IF (A(K).NE.0.) GOTO 5                                                    
+      M(K)=999                                                                  
+      A(K)=-1.                                                                  
+      J=J+1                                                                     
+5     CONTINUE                                                                  
+      IF(J.EQ.N) RETURN                                                         
+      NN=N-J                                                                    
+      K=0                                                                       
+10    K=K+1                                                                     
+      RMAX=A(1)                                                                 
+      MSUP=1                                                                    
+      DO 1 I=2,N                                                                
+      IF(A(I).LE.RMAX) GOTO 1                                                   
+      RMAX=A(I)                                                                 
+      MSUP=I                                                                    
+1     CONTINUE                                                                  
+      M(MSUP)=K                                                                 
+      A(MSUP)=-1.                                                               
+      IF(K.LT.NN) GOTO 10                                                       
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE ORD(L,RANG,IETOIL)                                             
+      LOGICAL Z                                                                 
+      INTEGER ECHAN                                                             
+      INTEGER RANG(10)                                                          
+      COMMON /POP/ECHAN(1500,10),K                                              
+      COMMON /TRAV/MATTRA(1500,10),NI1,NIP                                      
+      J0=NI1                                                                    
+      J1=NIP                                                                    
+      DO 30 I=NI1,NIP                                                           
+          Z=.FALSE.                                                             
+          DO40J=1,L                                                             
+40    Z=Z.OR.(MATTRA(I,IETOIL).EQ.RANG(J))                                      
+      IF(.NOT.Z)GOTO50                                                          
+          DO 60 J=1,K                                                           
+60    ECHAN(J0,J)=MATTRA(I,J)                                                   
+          J0=J0+1                                                               
+          GOTO30                                                                
+50        DO 70 J=1,K                                                           
+70    ECHAN(J1,J)=MATTRA(I,J)                                                   
+          J1=J1-1                                                               
+30        CONTINUE                                                              
+      RETURN                                                                    
+      END                                                                       
+
+      SUBROUTINE IMP(N,G,JIK)                                                   
+      INTEGER A,D,DECOU,G,PRT
+      INTEGER STOCK(10)      
+      COMMON /POP/A(1500,10),NF
+      COMMON/DICHO/N1,M,IF,P,D(10)                                              
+      COMMON /DECDEC/DECOU(100)                                                 
+      COMMON/CARAC/NCAR(10)                                                     
+      COMMON /ENSOR/LEC,PRT                                                  
+      N0=DECOU(JIK)                                                             
+      N2=DECOU(JIK+1)                                                           
+      M1=N1-N0                                                                  
+      M2=N2-N1                                                                  
+      CMG1=0.                                                                   
+      N01=N0+1                                                                  
+      DO 1 I=N01,N1                                                             
+1     CMG1=CMG1+A(I,NF)                                                         
+      CMG1=CMG1/M1                                                              
+      CMG2=0.                                                                   
+      N10=N1+1                                                                  
+      DO 2 I=N10,N2                                                             
+2     CMG2=CMG2+A(I,NF)                                                         
+      CMG2=CMG2/M2                                                              
+      WRITE(PRT,1000) N,G,M1,IF,P,CMG1                                          
+      WRITE(PRT,2000) (D(J),J=1,M)                                              
+      G=G+1                                                                     
+      WRITE(PRT,1000) N,G,M2,IF,P,CMG2                                          
+      L=0                                                                       
+      NN=NCAR(IF)                                                               
+      DO 10 J=1,NN                                                              
+      I=0                                                                       
+      DO 11 JJ=1,M                                                              
+      IF(D(JJ).EQ.J) GOTO 10                                                    
+      I=I+1                                                                     
+11    CONTINUE                                                                  
+      IF(I.NE.M) GOTO 10                                                        
+      L=L+1                                                                     
+      STOCK(L)=J                                                                
+10    CONTINUE                                                                  
+      WRITE(PRT,2000) (STOCK(J),J=1,L)                                          
+      RETURN                                                                    
+1000  FORMAT(1H ,3X,2('*   ',I2,3X),'*',7X,I4,8X,'*',5X,I2,5X,'*',44X,'*        
+     *',2(2X,F10.6,2X,'*'))                                                     
+2000  FORMAT(1H+,57X,10(I1,' - '))                                              
+      END                                                                       
+
+      SUBROUTINE REPART(NIV,MAX)                                                
+      INTEGER A,D                                                               
+      INTEGER S(10)                                                             
+      COMMON /POP/A(1500,10),NF                                                 
+      COMMON/DECOUP/D(100),NM(10,100),NMAX(10,100)                              
+      COMMON/CARAC/NCAR(10)                                                     
+      COMMON /ENSOR/LEC,IMP                                                     
+      WRITE(IMP,100)                                                            
+      NIV=NIV-1                                                                 
+      DO 1 I=1,NIV                                                              
+      WRITE(IMP,1000) I                                                         
+      MAXG=D(I)                                                                 
+      DO 2 J=1,MAXG                                                             
+      IF(NM(I,J).EQ.0) GOTO 2                                                   
+      WRITE(IMP,2000) J                                                         
+      WRITE(IMP,4001)                                                           
+      WRITE(IMP,2001) (K,K=1,MAX)                                               
+      WRITE(IMP,4000)                                                           
+      NU1=NM(I,J)                                                               
+      NU2=NMAX(I,J)                                                             
+      DO 3 K=1,NF                                                               
+      DO 10 II=1,MAX                                                            
+10    S(II)=0                                                                   
+      DO 4 L=NU1,NU2                                                            
+      IND=A(L,K)                                                                
+      S(IND)=S(IND)+1                                                           
+4     CONTINUE                                                                  
+      NN=NCAR(K)                                                                
+      IF(K.NE.NF) GOTO 11                                                       
+      WRITE(IMP,2999) (S(L),L=1,NN)                                             
+      WRITE(IMP,4000)                                                           
+      GOTO 3                                                                    
+11    WRITE(IMP,3000) K,(S(L),L=1,NN)                                           
+      WRITE(IMP,5000)                                                           
+3     CONTINUE                                                                  
+2     CONTINUE                                                                  
+1     CONTINUE                                                                  
+      RETURN                                                                    
+100   FORMAT(1H1,31X,'REPARTITION DE LA POPULATION SUIVANT Y ET LES FACT        
+     *EURS A CHAQUE NIVEAU'/1H ,31X,70(1H=))                                    
+1000  FORMAT(////1H ,60X,'NIVEAU ',I2/1H ,60X,9(1H=))                           
+2000  FORMAT(//1H ,10X,'GROUPE ',I2/1H ,10X,9(1H-))                             
+2001  FORMAT(1H ,11X,'MODALITES',11X,'I',10(3X,I2,4X,'I'))                      
+2999  FORMAT(1H ,11X,'CRITERE Y',11X,'I',10(3X,I2,4X,'I'))                      
+3000  FORMAT(1H ,11X,'FACTEUR ',I1,11X,'I',10(3X,I2,4X,'I'))                    
+4000  FORMAT(1H ,132(1H*))                                                      
+4001  FORMAT(1H0,132(1H*))                                                      
+5000  FORMAT(1H ,31(1H-),'I',10(9(1H-),'I'))                                    
+      END                                                                       
+
+      SUBROUTINE IMPPOP(C)                                                      
+      INTEGER E,C,DECOU                                                         
+      DIMENSION STAR(132),BLANC(132),ENTIER(9)                                  
+      COMMON/POP/E(1500,10),NF                                                  
+      COMMON /DECDEC/DECOU(100)                                                 
+      COMMON /ENSOR/LEC,IMP                                                     
+      DATA STAR,BLANC/132*'*',132*' '/                                          
+      DATA ENTIER/'1','2','3','4','5','6','7','8','9'/                          
+      DATA BL/' '/YGREC/'Y'/                                                    
+      WRITE(IMP,100)                                                            
+      NNF=NF-1                                                                  
+      NSTAR=13*NF+1                                                             
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      WRITE(IMP,500) (ENTIER(I),I=1,NNF)                                        
+      BLANC(NF)=YGREC                                                           
+      WRITE(IMP,901) (BLANC(I),I=1,NF)                                          
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+      BLANC(NF)=BL                                                              
+      C=C-1                                                                     
+      DO 1 K=1,C                                                                
+      NP0=DECOU(K)+1                                                            
+      NP1=DECOU(K+1)                                                            
+      DO 2 I=NP0,NP1                                                            
+      WRITE(IMP,900) (BLANC(J),J=1,NF)                                          
+      WRITE(IMP,600) (E(I,J),J=1,NF)                                            
+2     CONTINUE                                                                  
+      WRITE(IMP,900) (BLANC(I),I=1,NF)                                          
+      WRITE(IMP,400) (STAR(I),I=1,NSTAR)                                        
+1     CONTINUE                                                                  
+      RETURN                                                                    
+100   FORMAT(1H1,55X,'POPULATION REORDONNEE'/1H ,55X,21(1H=)/1H0)               
+400   FORMAT(1H ,132A1)                                                         
+500   FORMAT(1H ,'I',10(' FACTEUR  ',A1,' I'))                                  
+600   FORMAT(1H ,'I',10(5X,I2,5X,'I'))                                          
+900   FORMAT(1H ,'I',10(10X,A1,' I'))                                           
+901   FORMAT(1H+,1X,10(10X,A1,' I'))                                            
+      END                                                                       
+
+	FUNCTION SEN3A (BIDON)
+	DATA M12/4096/
+	DATA F1/2.44140625E-04/F2/5.96046448E-08/F3/1.45519152E-11/
+	DATA J1/3823/J2/4006/J3/2903/
+	DATA I1/3823/I2/4006/I3/2903/
+	K3=I3*J3
+	L3=K3/M12
+	K2=I2*J3+I3*J2+L3
+	L2=K2/M12
+	K1=I1*J3+I2*J2+I3*J1+L2
+	L1=K1/M12
+	I1=K1-L1*M12
+	I2=K2-L2*M12
+	I3=K3-L3*M12
+	SEN3A=F1*FLOAT(I1)+F2*FLOAT(I2)+F3*FLOAT(I3)
+	RETURN
+	END
+      SUBROUTINE SHELK(N,X,KX)                                                  
+      DIMENSION X(N),KX(N)                                                      
+      DO 10 J=1,N                                                               
+      KX(J)=J                                                                   
+10    CONTINUE                                                                  
+      I=1                                                                       
+20    I=I+1                                                                     
+      IF (I.LE.N) GOTO 20                                                       
+      M=I-1                                                                     
+30    M=M/2                                                                     
+      IF (M.EQ.0) GOTO 70                                                       
+      K=N-M                                                                     
+      DO 60 J=1,K                                                               
+      JM=J+M                                                                    
+40    JM=JM-M                                                                   
+      IF (JM.LE.0) GOTO 60                                                      
+50    L=JM+M                                                                    
+      IF (X(L).GE.X(JM)) GOTO 60                                                
+      PIV=X(JM)                                                                 
+      X(JM)=X(L)                                                                
+      X(L)=PIV                                                                  
+      KPIV=KX(JM)                                                               
+      KX(JM)=KX(L)                                                              
+      KX(L)=KPIV                                                                
+      GOTO 40                                                                   
+60    CONTINUE                                                                  
+      GOTO 30                                                                   
+70    RETURN                                                                    
+      END                                                                       
+	SUBROUTINE SIMUR (N,EX,EY,SX,SY,COR,X,Y)
+	DIMENSION X(N),Y(N)
+	DO 10 I=1,N
+	Z1=BOXMU(BIDON)
+	Z2=BOXMU(BIDON)
+	X(I)=EX+SX*Z1
+	U=Z2*SY*SQRT(1.0-COR**2)
+	Y(I)=EY+COR*(SY/SX)*(X(I)-EX)+U
+10	CONTINUE
+	RETURN
+	END
+	FUNCTION STROB (EPS,SIGMA)
+	U=CRUSK(BIDON)
+	IF (U.GT.EPS) GOTO 10
+	STROB=SIGMA*BOXMU(BIDON)
+	RETURN
+10	STROB=BOXMU(BIDON)
+	RETURN
+	END
+	SUBROUTINE VVPRO(NDIM,N,W,D)
+	DIMENSION W(NDIM,NDIM),D(NDIM)
+	DATA EPSIL/0.000001/
+	RN=N
+	W2=0	
+	DO 10 L=1,N
+	DO 10 K=1,N
+10	W2=W2+W(L,K)*W(L,K)
+	EP=EPSIL*W2/RN
+	NI=N*(N-1)/2
+       	KI=NI
+	N1=N-1
+15	CONTINUE
+	DO 140 K=1,N1
+	K1=K+1
+	DO 140 KP=K1,N
+	W2=0.
+	WW=0.
+	DO 20 L=1,N
+	W2=W2+W(L,K)*W(L,KP)
+20	WW=WW+(W(L,K)+W(L,KP))*(W(L,K)-W(L,KP))
+	W22=W2*2.
+	W2A=ABS(W22)
+	IF (W2A-EP) 30,40,40
+30	IF (WW) 40,130,130
+40	WWA=ABS(WW)
+	IF (W2A-WWA) 50,50,60
+50	TTETA=W2A/WWA
+	CTETA=1./SQRT(1.+TTETA**2)
+	STETA=TTETA*CTETA
+	GOTO 70
+60	ATETA=WWA/W2A
+	STETA=1./SQRT(1.+ATETA**2)
+	CTETA=ATETA*STETA
+70	CTETA=SQRT((1.+CTETA)/2.)
+	STETA=STETA/(2.*CTETA)	
+	IF (WW) 80,90,90
+80	FLIP=CTETA
+	CTETA=STETA 	             
+	STETA=FLIP
+90	IF (W22) 100,110,110
+100	STETA=-STETA
+110	CONTINUE
+	DO 120 L=1,N
+	FLIP=W(L,K)
+	W(L,K)=FLIP*CTETA+W(L,KP)*STETA
+120	W(L,KP)=-FLIP*STETA+W(L,KP)*CTETA
+	KI=NI
+	GOTO 140          
+130	KI=KI-1
+	IF (KI) 150,150,140
+140	CONTINUE
+	GOTO 15
+150	CONTINUE
+	DO 170 K=1,N
+	D(K)=0.
+	DO 160 L=1,N
+160	D(K)=D(K)+W(L,K)*W(L,K)
+170	D(K)=SQRT(D(K))
+	DO 180 K=1,N
+	DO 180 L=1,N
+180	W(L,K)=W(L,K)/D(K)
+	RETURN
+	END

@@ -1,0 +1,293 @@
+
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1253">
+<link rel=Edit-Time-Data href="./TSP_files/editdata.mso">
+<link rel=OLE-Object-Data href="./TSP_files/oledata.mso">
+<title>Analysis of TSP</title>
+<style><!--
+.Normal
+	{font-size:10.0pt;
+	font-family:Arial;}
+.Normal2
+	{text-align:justify;
+	font-size:12.0pt;
+	font-family:Arial;}
+-->
+</style>
+</head>
+<body lang=EN-GB link=blue vlink=purple class="Normal" bgcolor="#ffffff">
+<p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US
+style='font-size:14.0pt;'>TSP (TRAVELING SALESMAN PROBLEM)</span></b></p>
+<p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>By 
+  GrMikeD</span></b></p>
+<p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>E-mail: 
+  </span></b><b><span
+lang=EL><a href="mailto:GrMikeD@usa.net"><span
+lang=EN-US>GrMikeD@usa.net</span></a></span></b><b><span
+lang=EN-US></span></b></p>
+<p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Web 
+  Page: </span></b><b><span
+lang=EL><a
+href="http://students.ceid.upatras.gr/~miatidis"><span lang=EN-US>http://students.ceid.upatras.gr/~miatidis</span></a></span></b><b><span
+lang=EN-US></span></b></p>
+<p class=Normal2><b><span lang=EN-US>Introduction</span></b></p>
+<p class=Normal2><span lang=EN-US>The TSP (Traveling Salesman Problem) is considered 
+  as one of the most difficult to solve problems and belongs to the category of 
+  the NP Complete problems. The situation it deals with is as follows:</span></p>
+<p class=Normal2><span lang=EN-US>A salesman has to visit n cities, each one exactly 
+  once. He starts from one of them (base city) and after visiting all the other, 
+  he returns to his base. We know the transport cost between any two of the cities. 
+  We want to find the optimal path for his visits. When we say the optimal we 
+  mean the path with the lowest cost.</span></p>
+<p class=Normal2><span lang=EN-US>This is a famous problem of the graph theory 
+  where the vertices of the graph represent the cities and the nodes, represent 
+  the paths between them. When there is no node connecting two vertices, it means 
+  that there is no way to reach one city from the other. Here, we assume that 
+  only one path can connect two cities and no more (the graph is simple).</span></p>
+<p class=Normal2><span lang=EN-US>For this problem we have implemented two algorithms. 
+  One is the <u>heuristic</u> and the other is the <u>exhaustive</u>. The heuristic 
+  algorithm does not always give us the best solution but is very quick and low 
+  costing. Contrary to the heuristic algorithm, the exhaustive always gives us 
+  the best solution but is very slow and resource - consuming. For example if 
+  we use 20 cities as input and run the exhaustive algorithm on the most powerful 
+  and modern computing system, it will spend 770 centuries to give us the solution! 
+  In practice, we find that for input n&gt;=10, the algorithm is very slow. </span></p>
+<p class=Normal2><b><span lang=EN-US>Analysis of the Heuristic Algorithm</span></b><b><span
+lang=EN-US></span></b></p>
+<p class=Normal2>This algorithm is based on the “greedy method”. As we have mentioned 
+  earlier, this algorithm succeeds in approaching a fast solution rather than 
+  the optimal solution. In some cases, it is possible that it will give us a solution 
+  very distant from the optimal one. Its basic advantage is that it is very quick. 
+  The basic idea of the algorithm is as follows: we start from the base city and 
+  after calculating its distance with its neighboring cities we select the city 
+  with the smallest distance. We then continue the same way for the next city 
+  and all the others until we have visited all the cities. We should emphasize 
+  that because we have assumed that a city might not be connected with another, 
+  this algorithm may come across a dead end. In such a case, it   finishes unsuccessfully. 
+</p>
+<p class=Normal2><span lang=EN-US>Lets suppose that the salesman has to visit 
+  n cities. For the first city the algorithm makes (n-1) comparisons. After selecting 
+  the second city, it makes other (n-2) comparisons (as we have already selected 
+  one and it cannot be selected again) and so goes on until we reach the (n-1) 
+  city when the algorithm finishes. We can say that the complexity of the algorithm 
+  is:</span></p>
+<p class=Normal2 align=center style='text-align:center'><span> </span><span lang=EL>δ</span><sub><span lang=EN-US>n 
+  </span></sub><span lang=EN-US>= (n-1) + (n-2) + (n-3) +…+ 0 + c=</span><b><span lang=EN-US> 
+  (n<sup>2</sup>- n)/2 + c</span></b><span> </span>.</p>
+<p class=Normal2><span lang=EN-US>As we can see the complexity is polynomial </span><b><span lang=EL>Ο</span></b><b><span lang=EN-US> 
+  (n<sup>2</sup>).</span></b><span
+lang=EN-US> </span></p>
+<p class=Normal2><b><span lang=EN-US>Analysis of the Exhaustive Algorithm</span></b><b><span
+lang=EN-US></span></b></p>
+<p class=Normal2><span lang=EN-US>Here we start from the base city and we try 
+  all the possible paths that exist. We calculate their costs and we output the 
+  path with the lowest cost. In the implemented algorithm, we take a couple of 
+  the paths and find the lowest costing one. After we compare it with another 
+  one and find the lowest costing between them. We go on the same way until we 
+  have compared and with the last one.</span></p>
+<p class=Normal2>It is obvious that the number of the possible paths is the number 
+  of the permutations of the n cities that is (n-1)! . We also find that for each 
+  of the    (n-1)! comparisons we make 2n operations approximately. We can say 
+  that the complexity of the algorithm is:</p>
+<p class=Normal2 align=center style='text-align:center'><span lang=EL>δ</span><sub><span lang=EN-US>n 
+  </span></sub><span
+lang=EN-US>= (n-1)!(2n) + c = 2n! + c</span></p>
+<p class=Normal2><span lang=EN-US>As</span><span lang=EN-US> </span><span
+lang=EN-US>we</span><span
+lang=EN-US> </span><span lang=EN-US>can</span><span
+lang=EN-US> </span><span lang=EN-US>see</span><span
+lang=EN-US> </span><span lang=EN-US>the</span><span
+lang=EN-US> </span><span lang=EN-US>complexity</span><span
+lang=EN-US> </span><span lang=EN-US>is</span><span
+lang=EN-US> </span><span lang=EN-US>factorial</span><span
+lang=EN-US> </span><b><span lang=EL>Ο (</span></b><b><span lang=EN-US>n</span></b><b><span
+lang=EL>!).</span></b><span lang=EL> </span></p>
+<p class=Normal2><b><span lang=EN-US>Practical</span></b><b><span lang=EN-US> 
+  </span></b><b><span lang=EN-US>Calculations</span></b><b><span
+lang=EL></span></b></p>
+<p class=Normal2><span lang=EN-US>Here are some practical results taken from the 
+  TspSolver program:</span></p>
+<table border=1 cellspacing=0 cellpadding=0>
+  <tr> 
+    <td width=76 valign=top class="Normal">&nbsp; </td>
+    <td width=296 colspan=3 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EL
+  style='text-transform:uppercase'>HEURISTIC</span></b><b><span
+  lang=EN-US style='text-transform:uppercase;
+  '></span></b></p>
+    </td>
+    <td width=338 colspan=3 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US
+  style='text-transform:uppercase;'>EXHAUSTIVE</span></b></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>N</span></b><b><span
+  lang=EL></span></b></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Flops</span></b></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Time(sec)</span></b></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Cost</span></b></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Flops</span></b></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Time(sec)</span></b></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><b><span lang=EN-US>Cost</span></b></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>4</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>12</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0087</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1253</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>45</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0138</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1253</span></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>5</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>20</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0089</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1516</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>253</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0447</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1516</span></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>6</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>30</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0102</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>2230</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1547</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,2301</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>2230</span></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>7</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>42</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0117</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>2505</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>10065</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1,5020</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1951</span></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>8</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>56</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0132</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1703</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>76303</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>11,3800</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>1244</span></p>
+    </td>
+  </tr>
+  <tr> 
+    <td width=76 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EL>9</span><span lang=EN-US></span></p>
+    </td>
+    <td width=93 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>72</span></p>
+    </td>
+    <td width=111 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>0,0147</span></p>
+    </td>
+    <td width=92 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>2925</span></p>
+    </td>
+    <td width=104 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>766061</span></p>
+    </td>
+    <td width=128 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>91,6100</span></p>
+    </td>
+    <td width=107 valign=top class="Normal"> 
+      <p class=Normal2 align=center style='text-align:center'><span lang=EN-US>2307</span></p>
+    </td>
+  </tr>
+</table>
+<p class=Normal2><span lang=EN-US>As we can see, for the heuristic algorithm, 
+  the flops and time values remain in low levels. In contrast, for the exhaustive 
+  algorithm they increase very quickly as the input n value increases. For values 
+  of n over 9 the exhaustive algorithm is extremely slow.</span></p>
+</body>
+</html>

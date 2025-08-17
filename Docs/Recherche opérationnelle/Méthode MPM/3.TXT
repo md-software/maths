@@ -1,0 +1,10 @@
+pp,2
+d,3
+mm,5
+mp,6
+ip,2,pp
+r,4,d
+f,1,d
+p,8,mp
+c,5,pp,d,ip,r
+m,7,d,mm,mp,f,p

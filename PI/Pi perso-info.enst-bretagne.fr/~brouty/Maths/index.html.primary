@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+<TITLE> Quelques activites mathematiques </TITLE>
+<META NAME="keywords" CONTENT="pi,number pi,nombre
+pi,lobatchewski,lobatchevski,non euclidien,geometrie,zeta,function
+zeta,fonction zeta,Riemann,hypersphere,sphere,d&eacute;riv&eacute;e">
+<META NAME="description" CONTENT="quelques expos&eacute;s math&eacute;matiques">
+</HEAD>
+<BODY bgcolor="#ffffff">
+<A HREF="../index.html"><IMG SRC="../Icones/back.xbm"> </A>Retour
+<A HREF="plan.html"><IMG SRC="../Icones/plan.xbm"> </A>Plan
+<A HREF="../index.html"><IMG SRC="../Icones/home.gif"> </A> Home Andr&eacute; Brouty
+<A HREF="mailto:andre.brouty@enst-bretagne.fr">
+<IMG SRC="../Icones/mail.xbm"></A>On peut m'&eacute;crire.
+<br>
+<a href="http://www.enst-bretagne.fr/"><IMG SRC="../Images/ABlogo.gif" border=0></a>
+<CENTER>
+<H3> On trouvera dans cette page quelques activit&eacute;s math&eacute;matiques
+connues mais pas toujours divulgu&eacute;es, enseign&eacute;es ou bien
+vulgaris&eacute;es. En esp&eacute;rant r&eacute;concilier mes coll&egrave;gues
+avec les math&eacute;matiques.</H3>
+</CENTER>
+<HR>
+<OL>
+<LI> <A HREF="pi.html"><b>Le nombre <I>pi</I>, d&eacute;cimales et algorithmes</b></A>
+[ le c&eacute;l&egrave;bre nombre d&eacute;cortiqu&eacute; ]
+<LI> <A HREF="sphere.html"><b>Mesure de l'<I>hypersph&egrave;re</I></b></A>
+[ pourquoi les banquiers n'ont pas de lingots sph&eacute;riques dans leurs
+ coffres ]
+<LI> <A HREF="lobatchewski.html"><b>Les g&eacute;om&eacute;tries non euclidiennes</b></A>
+[ d'Euclide a Poincar&eacute;, la saga des figures &eacute;tranges ]
+<LI> <A HREF="noderiv.html"><b>Les fonctions continues sans d&eacute;riv&eacute;e</b></A>
+[ les monstres qui horrifiaient Charles Hermites ]
+<LI> <A HREF="zeta.html"><b>1+2+3+... = -1/12</b></A> [ vu dans "Ciel et Espace" N0 238
+page 32. <A HREF="zeta.html"><b>Explications</b></A> ]
+<LI> <A HREF="biblio.html"><b>Mes bouquins de maths pr&eacute;f&eacute;r&eacute;s</b>
+</A> [ de saines lectures pour les soir&eacute;es d'hiver ]
+<LI> <A HREF="webmath.html"><b>Les sites web</b></A> [ pour navigateurs dans le vent ]
+</OL>
+<P>
+<CENTER><H2> Ne manquez pas prochainement</H2></CENTER>
+si mes coll&egrave;gues ne m'emb&ecirc;tent pas trop avec des projets, comptes
+et autres logiciels &agrave; installer
+<P>
+<OL>
+<LI> L'axiome du choix de son introduction en 1904, la pol&eacute;mique qui en
+suivit jusqu'&agrave; la d&eacute;monstration de son ind&eacute;pendance.
+<LI> L'analyse non standard d'Abraham Robinson ou la formalisation des
+infiniments petits de Leibniz; tr&egrave;s peu vulgaris&eacute;e en France.
+<LI> Le th&eacute;or&egrave;me d'&eacute;ternel retour de
+Poincar&eacute;, pour buveurs de caf&eacute; qui ont de la patience; les origines
+math&eacute;matiques du chaos.
+</OL>
+<HR>
+<A HREF="../index.html"><IMG SRC="../Icones/back.xbm"> </A>Retour
+<A HREF="plan.html"><IMG SRC="../Icones/plan.xbm"> </A>Plan
+<A HREF="../index.html"><IMG SRC="../Icones/home.gif"> </A> Home Andr&eacute; Brouty
+<A HREF="mailto:andre.brouty@enst-bretagne.fr">
+<IMG SRC="../Icones/mail.xbm"></A>On peut m'&eacute;crire.
+</BODY>
+</HTML>

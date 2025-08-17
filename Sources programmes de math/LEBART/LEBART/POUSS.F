@@ -1,0 +1,37 @@
+      SUBROUTINE POUSS(MDIM,NDIM,KDIM,NTOT,KTOT,N,K,KODI,KODJ,F,
+     1                 IDI,IDJ,ID)
+      DIMENSION F(NDIM,KDIM),IDI(NDIM),IDJ(KDIM),KODI(NDIM),KODJ(KDIM)
+      DIMENSION ID(MDIM)
+      IF (NTOT.EQ.N) GOTO 40
+      IA=0
+      IS=N
+      DO 20 I=1,NTOT
+      IF (KODI(I).NE.1) GOTO 10
+      IA=IA+1
+      KODI(I)=IA
+      ID(IA)=IDI(I)
+      GOTO 20
+10    IS=IS+1
+      KODI(I)=IS
+      ID(IS)=IDI(I)
+20    CONTINUE
+      DO 30 I=1,NTOT
+30    IDI(I)=ID(I)
+40    IF (KTOT.EQ.K) GOTO 80
+      JA=0
+      JS=K
+      DO 60 J=1,KTOT
+      IF (KODJ(J).NE.1) GOTO 50
+      JA=JA+1
+      KODJ(J)=JA
+      ID(JA)=IDJ(J)
+      GOTO 60
+50    JS=JS+1
+      KODJ(J)=JS
+      ID(JS)=IDJ(J)
+60    CONTINUE
+      DO 70 J=1,KTOT
+70    IDJ(J)=ID(J)
+80    CALL PERMX(NDIM,KDIM,NTOT,KTOT,F,KODI,KODJ)
+      RETURN
+      END
