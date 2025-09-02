@@ -7,11 +7,11 @@ Disk memory used : ~ 0.00 Meg
 --------------------------------------------------
 Computation run information :
 
-Start : 05/27/17  12:53:25
-End   : 05/27/17  12:53:25
-Duration : 0.05 seconds
+Start : 09/02/25  12:00:13
+End   : 09/02/25  12:00:13
+Duration : 0.02 seconds
 ==================================================
-Total computation time : 0.05 seconds
+Total computation time : 0.02 seconds
 ==================================================
 
 Pi = 3.
